@@ -1,0 +1,41 @@
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   if(this.state.isLoading){
+        return(
+          <View>
+          <Text>Loading...</Text>
+          <ActivityIndicator />
+          </View>
+        );
+
+      }else{
+        return(
+          <View>
+          <View>
+          <FlatList
+          data={this.state.UserListData}
+          renderItem={({item}) =>
+            <View>
+        }
+          
+          </View>
+          </View>
+        )
+      }
+
+
+  <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="Home" component={Home}/>
+          <Stack.Screen name="NewMessage" component={}/>
+ 
+
+        </Stack.Navigator>
+      </NavigationContainer>
