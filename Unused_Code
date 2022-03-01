@@ -90,3 +90,44 @@
                 throw 'Passwords do not match.';
             }
 
+   checkEmail() {
+
+        var email = this.state.email;
+        var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    
+        if (!filter.test(email.value)) {
+           // alert('Enter a valid email address');
+            alert(this.state.email);
+        email.focus;
+        return false;
+     } else {
+         return true;
+     }
+    }
+
+    checkPassword() {
+        var minChar = 5
+        var email = this.state.email;
+
+        if (!minChar.test(email.value)) {
+            alert('Password must be atleast 4 characters');
+            email.focus;
+            return false;
+        }
+        else{
+        return true;
+    }
+    }
+
+
+
+
+    <View style={styles.formItem}>
+    <Text style={styles.formLabel}>Confirm Password:</Text>
+    <TextInput
+        // placeholder="confirm password"
+        // stye={styles.formInput}
+         //onChangeText={(confirmPass) => this.setState({confirmPass})}
+         //value={this.state.confirmPass}
+     />
+ </View>

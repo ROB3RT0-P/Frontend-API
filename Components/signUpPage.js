@@ -2,7 +2,12 @@ import React, { Component } from 'react';
 
 import { Button, View, ScrollView, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 
+var passGood = false;
+var emailGood = false;
+
 class SU extends Component {
+
+
 
     constructor(props) {
         super(props);
@@ -17,61 +22,113 @@ class SU extends Component {
 
 
 
-    checkEmail() {
+ 
 
-        var email = document.getElementById('txtEmail');
-        var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+
+    EmailValidation = (email) => {
+        email = this.state.email;
+        
+        if (!email || email.length === 0) {
+            alert('Email cannot be empty');
+            return 'Email cannot be empty';
+          }
+        
+          const isEmailValid = /@/.test(email);
+          if (!isEmailValid) {
+            
+            alert(this.state.email + ' is not a valid email');
+            return 'Invalid email provided';
+            
+          }
+        
+          const isEmailValid2 = /.com/.test(email);
+          if (!isEmailValid2) {
+            
+            alert(this.state.email + ' is not a valid domain');
+            return 'Invalid domain provided';
+            
+          }
+
+          emailGood = true;
+          return null;
+      };
+
+      PassValidation = (pass, pass2) => {
+        pass = this.state.pass;
+        //pass2 = this.state.confirmPass;
+
+        if (!pass || pass.length <= 4) {
+            alert('Password must be more than 4 letters');
+            return 'Password must be more than 4 letters';
+          }
+        
+        //  if (pass !== pass2) {
+        //    alert('Passwords do not match');
+        //    return 'Passwords do not match';
+        //  }
+
+          passGood = true;
+          return null;
+      };
+
+      addUser(){
+        let to_send = {
+          id: parseInt(this.state.id),
+          first_name: this.state.firstName,
+          last_name: this.state.lastName,
+          email: this.state.email,
+          password: this.state.password,
+        };
     
-        if (!filter.test(email.value)) {
-        alert('Enter a valid email address');
-        email.focus;
-        return false;
-     } else {
-         return true;
-     }
-    }
-
-    checkPassword() {
-        var minChar = 5
-
-        if (!filter.test(email.value)) {
-            alert('Password must be atleast 4 characters');
-            email.focus;
-            return false;
-        }
-        else{
-        return true;
-    }
-    }
-    signUp = () => {
-
-        checkEmail(this.state.email);
-        checkPassword(this.state.password);
-
-        return fetch("http://localhost:3333/api/1.0.0/user", {
-            method: 'post',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(this.state)
+        return fetch("http://10.0.2.2:3333/user",
+        { method: 'post',
+        headers: {
+          'content-Type': 'application/json'
+        },
+        body: JSON.stringify(to_send)
         })
         .then((response) => {
-        
-            if(response.status === 201){
-                return response.json()
-            }else if(response.status === 400){
-                throw 'Failed validation';
-            }else{
-                throw 'Something went wrong';
-            }
-        })
-        .then((responseJson) => {
-               console.log("User created with ID: ", responseJson);
-               this.props.navigation.navigate("Login");
+            alert("User Added");
+          Alert.alert("User Added");
         })
         .catch((error) => {
-            console.log(error);
+          console.log(error);
         })
+      }
+
+    signUp = () => {
+
+        //this.EmailValidation(this.state.email);
+        //this.PassValidation(this.state.pass, this.state.confirmPass);
+
+        
+        //this.addUser();
+
+        
+       
+                return fetch("http://localhost:3333/api/1.0.0/user", {
+                    method: 'post',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(this.state)
+                })
+                .then((response) => {
+                    if(response.status === 201){
+                        return response.json()
+                    }else if(response.status === 400){
+                        throw 'Failed validation';
+                    }else{
+                        throw 'Something went wrong';
+                    }
+                })
+                .then((responseJson) => {
+                    console.log("User created with ID: ", responseJson);
+                    this.props.navigation.navigate("Login");
+                })
+                .catch((error) => {
+                    console.log(error);
+                })
     }
 
 
@@ -125,21 +182,13 @@ class SU extends Component {
                         />
                     </View>
 
-                    <View style={styles.formItem}>
-                        <Text style={styles.formLabel}>Confirm Password:</Text>
-                        <TextInput
-                            placeholder="confirm password"
-                            stye={styles.formInput}
-                            onChangeText={(confirmPass) => this.setState({confirmPass})}
-                            value={this.state.confirmPass}
-                        />
-                    </View>
+                   
 
 
                     <View style={styles.formItem}>
                         <TouchableOpacity
                             style={styles.formTouch}
-                            onPress={() => this.signUp()}
+                            onPress={() => this.addUser()}
                         >
                             <Text style={styles.formTouchText}>Sign Up</Text>
                         </TouchableOpacity>
