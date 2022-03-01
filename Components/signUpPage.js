@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { View, ScrollView, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { Button, View, ScrollView, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 
 class SU extends Component {
 
@@ -12,13 +12,68 @@ class SU extends Component {
             lastName: '',
             email: '',
             password: '',
-            confirmPass: '',
         }
     }
 
-    signUp = () => {
-        console.log(this.state)
+
+
+    checkEmail() {
+
+        var email = document.getElementById('txtEmail');
+        var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    
+        if (!filter.test(email.value)) {
+        alert('Enter a valid email address');
+        email.focus;
+        return false;
+     } else {
+         return true;
+     }
     }
+
+    checkPassword() {
+        var minChar = 5
+
+        if (!filter.test(email.value)) {
+            alert('Password must be atleast 4 characters');
+            email.focus;
+            return false;
+        }
+        else{
+        return true;
+    }
+    }
+    signUp = () => {
+
+        checkEmail(this.state.email);
+        checkPassword(this.state.password);
+
+        return fetch("http://localhost:3333/api/1.0.0/user", {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(this.state)
+        })
+        .then((response) => {
+        
+            if(response.status === 201){
+                return response.json()
+            }else if(response.status === 400){
+                throw 'Failed validation';
+            }else{
+                throw 'Something went wrong';
+            }
+        })
+        .then((responseJson) => {
+               console.log("User created with ID: ", responseJson);
+               this.props.navigation.navigate("Login");
+        })
+        .catch((error) => {
+            console.log(error);
+        })
+    }
+
 
     render() {
 
@@ -44,7 +99,7 @@ class SU extends Component {
                         <TextInput
                             placeholder="enter last name"
                             stye={styles.formInput}
-                            onChangeText={(lastName) => this.setState({ lastName })}
+                            onChangeText={(lastName) => this.setState({lastName})}
                             value={this.state.lastName}
                         />
                     </View>
@@ -54,7 +109,7 @@ class SU extends Component {
                         <TextInput
                             placeholder="enter email"
                             stye={styles.formInput}
-                            onChangeText={(email) => this.setState({ email })}
+                            onChangeText={(email) => this.setState({email})}
                             value={this.state.email}
                         />
                     </View>
@@ -65,7 +120,7 @@ class SU extends Component {
                             placeholder="enter password"
                             stye={styles.formInput}
                             secureEntryText
-                            onChangeText={(password) => this.setState({ password })}
+                            onChangeText={(password) => this.setState({password})}
                             value={this.state.password}
                         />
                     </View>
@@ -89,6 +144,11 @@ class SU extends Component {
                             <Text style={styles.formTouchText}>Sign Up</Text>
                         </TouchableOpacity>
                     </View>
+
+                    <Button
+                    title="Already have an account?"
+                    onPress={() => navigation.navigate('Login')}
+                    />
 
                 </ScrollView>
             </View>

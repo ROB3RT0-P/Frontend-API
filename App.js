@@ -1,96 +1,40 @@
 import 'react-native-gesture-handler';
-
 import React, { Component } from 'react';
-
 import { View, Text, TextInput, Button, FlatList, Alert } from 'react-native';
-
-import { Camera } from 'expo-camera';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 
 import SU from './Components/signUpPage.js';
 import Log from './Components/login.js';
-import Home from './Components/homePage.js';
-import SO from './Components/signedOut.js'
+import HomeScreen from './Components/homeScreen.js';
+import FriendList from './Components/friendList.js';
+import SearchScreen from './Components/searchScreen.js';
 
-class SBCW extends Component{
+const Stack = createStackNavigator();
+var isSignedIn;
+class CW extends Component{
 
   constructor(props){
     super(props);
-
-    this.state = {
-      hasPermission: null,
-      type: Camera.Constants.Type.back
-    }
-  }
-
-  sendToServer = async (data) => {
-    // Get these from AsyncStorage
-    let id = 10;
-    let token = "a3b0601e54775e60b01664b1a5273d54"
-
-    let res = await fetch(data.base64);
-    let blob = await res.blob();
-
-    return fetch("http://localhost:3333/api/1.0.0/user/" + id + "/photo", {
-        method: "POST",
-        headers: {
-            "Content-Type": "image/png",
-            "X-Authorization": token
-        },
-        body: blob
-    })
-    .then((response) => {
-        console.log("Picture added", response);
-    })
-    .catch((err) => {
-        console.log(err);
-    })
-}
-
-  takePicture = async () => {
-      if(this.camera){
-          const options = {
-              quality: 0.5, 
-              base64: true,
-              onPictureSaved: (data) => this.sendToServer(data)
-          };
-          await this.camera.takePictureAsync(options); 
-      } 
   }
 
   render(){
+    const navigation = this.props.navigation;
 
     return (
-
-      <SU/>
-    
+          <NavigationContainer>
+              <Stack.Navigator>
+              
+                  <Stack.Screen name="Home" component={HomeScreen} />
+                  <Stack.Screen name="Login" component={Log} /> 
+                  <Stack.Screen name="FriendList" component={FriendList} />
+                  <Stack.Screen name="Search" component={SearchScreen} />
+                 
+                  <Stack.Screen name="SignUp" component={SU} />
+              </Stack.Navigator>
+          </NavigationContainer>
     );
-
-
-    if(this.state.hasPermission){
-      return(
-        <View style={styles.container}>
-          <Camera 
-            style={styles.camera} 
-            type={this.state.type}
-            ref={ref => this.camera = ref}
-          >
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => {
-                  this.takePicture();
-                }}>
-                <Text style={styles.text}> Take Photo </Text>
-              </TouchableOpacity>
-            </View>
-          </Camera>
-        </View>
-      );
-    }else{
-      return(
-        <Text>No access to camera</Text>
-      );
-    }
+ 
   }
 
   componentDidMount(){
@@ -99,7 +43,7 @@ class SBCW extends Component{
   }
 
   getData(){
-    return fetch("http://10.0.2.2:3333/list")
+    return fetch("http://10.0.2.2:3333/users")
     .then((response) => response.json())
     .then((responseJson) => {
       this.setState({
@@ -123,7 +67,7 @@ class SBCW extends Component{
     this.getData();
   })
   .then((response) => {
-    Alert.alert("User Daleted");
+    Alert.alert("User Deleted");
   })
   .catch((error) => {
     console.log(error);
@@ -154,14 +98,13 @@ class SBCW extends Component{
     })
   }
 
-  messageUser(){
-
-  }
-
-
-
 }
 
-  
 
-export default SBCW;
+
+
+
+
+
+
+export default CW;

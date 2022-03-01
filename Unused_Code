@@ -39,3 +39,54 @@
 
         </Stack.Navigator>
       </NavigationContainer>
+
+
+
+
+      homescreen:
+
+
+       /*
+
+    render() {
+
+        const navigation = this.props.navigation;
+
+
+
+        return(
+            <><View>
+
+                <Button
+                    title="Login"
+                    onPress={() => navigation.navigate('Login')} />
+            </View>
+            
+            <ScrollView>
+
+
+
+                    <View style={{ flex: 10, justifyContent: 'center', backgroundColor: '#F5FCFF' }}>
+
+                        <View style={{ flex: 1, backgroundColor: "lightgrey", justifyContent: 'center', alignItems: 'center', margin: "5%" }}>
+                            <Text style={{ flex: 1, backgroundColor: "lightblue" }}>User 1</Text>
+
+                            <Text style={{ flex: 1, backgroundColor: "white", justifyContent: 'center', alignItems: 'center', margin: "5%" }}>Example Post Text</Text>
+                        </View>
+                    </View>
+                </ScrollView></>
+        );
+    }
+    
+    */
+
+
+
+
+ if(password == confirmPass){
+            
+        }else{
+            alert("Passwords do not match.");
+                throw 'Passwords do not match.';
+            }
+
