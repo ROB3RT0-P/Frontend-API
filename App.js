@@ -24,10 +24,10 @@ class CW extends Component{
     return (
           <NavigationContainer>
               <Stack.Navigator>
-              
+               <Stack.Screen name="FriendList" component={FriendList} />
                   <Stack.Screen name="Home" component={HomeScreen} />
                   <Stack.Screen name="Login" component={Log} /> 
-                  <Stack.Screen name="FriendList" component={FriendList} />
+                 
                   <Stack.Screen name="Search" component={SearchScreen} />
                  
                   <Stack.Screen name="SignUp" component={SU} />
@@ -58,45 +58,7 @@ class CW extends Component{
     }
 
 
-  deleteUser(id){
-    return fetch("http://10.0.2.2:333/users/{user_id}/" + id, 
-    {
-    method: 'delete'
-  })
-  .then((response) => {
-    this.getData();
-  })
-  .then((response) => {
-    Alert.alert("User Deleted");
-  })
-  .catch((error) => {
-    console.log(error);
-  })
-}
 
-  addUser(){
-    let to_send = {
-      id: parseInt(this.state.id),
-      user_name: this.state.user_name,
-      first_name: this.state.first_name,
-      last_name: this.state.last_name,
-      email: this.state.email,
-    };
-
-    return fetch("http://10.0.2.2:333/users/{user_id}/",
-    { method: 'post',
-    headers: {
-      'content-Type': 'application/json'
-    },
-    body: JSON.stringify(to_send)
-    })
-    .then((response) => {
-      Alert.alert("User Added");
-    })
-    .catch((error) => {
-      console.log(error);
-    })
-  }
 
 }
 

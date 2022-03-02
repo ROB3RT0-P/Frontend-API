@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
 
-class SearchScreen extends Component{
+class UserPosts extends Component{
   constructor(props) {
     super(props);
 
@@ -36,7 +36,7 @@ getData(){
 
 
 
-  deleteUser(id){
+  deletePost(id){
     return fetch("http://10.0.2.2:333/users/{user_id}/" + id, 
     {
     method: 'delete'
@@ -52,7 +52,7 @@ getData(){
   })
 }
 
-  addUser(){
+  addPost(){
     let to_send = {
       id: parseInt(this.state.id),
       user_name: this.state.user_name,
@@ -89,7 +89,7 @@ getData(){
   }
 }
 
-export default SearchScreen;
+export default UserPosts;
 
 const styles = StyleSheet.create({
   container: {

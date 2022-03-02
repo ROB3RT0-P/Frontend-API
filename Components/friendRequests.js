@@ -9,7 +9,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 
-class FriendList extends Component {
+class FriendRequests extends Component {
 
 
     constructor(props) {
@@ -17,7 +17,7 @@ class FriendList extends Component {
 
       this.state = {
           isLoading: true,
-         friendListData: []
+         friendRequestData: []
       };
         
     }
@@ -30,7 +30,7 @@ class FriendList extends Component {
 
 
     getData(){
-        return fetch("http://10.0.2.2:3333/User/{user_id}/")
+        return fetch("http://10.0.2.2:3333/friendrequests")
         .then((response)=> response.json())
         .then((responseJson) => {
             this.setState({
@@ -43,9 +43,32 @@ class FriendList extends Component {
         });
     }
 
+ 
+    acceptRequest(id){
+        let to_send = {
+          id: parseInt(this.state.id),
+          user_name: this.state.user_name,
+          first_name: this.state.first_name,
+          last_name: this.state.last_name,
+          email: this.state.email,
+        };
     
+        return fetch("http://10.0.2.2:333/users/{user_id}/",
+        { method: 'post',
+        headers: {
+          'content-Type': 'application/json'
+        },
+        body: JSON.stringify(to_send)
+        })
+        .then((response) => {
+          Alert.alert("User Added");
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+      }
 
-    deleteUser(id){
+    deleteRequest(id){
         return fetch("http://10.0.2.2:333/users/{user_id}/" + id, 
         {
         method: 'delete'
@@ -85,4 +108,4 @@ class FriendList extends Component {
 }
 
 
-export default FriendList;
+export default FriendRequests;
