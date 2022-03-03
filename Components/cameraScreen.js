@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { Camera } from 'expo-camera';
 
-class Camera extends Component{
+class CameraScreen extends Component{
   constructor(props){
     super(props);
 
@@ -81,7 +81,7 @@ class Camera extends Component{
   }
 }
 
-export default Camera;
+export default CameraScreen;
 
 const styles = StyleSheet.create({
   container: {

@@ -53,7 +53,7 @@ class FriendRequests extends Component {
           email: this.state.email,
         };
     
-        return fetch("http://10.0.2.2:333/users/{user_id}/",
+        return fetch("http://10.0.2.2:333/friendrequests/{user_id}/",
         { method: 'post',
         headers: {
           'content-Type': 'application/json'
@@ -69,7 +69,7 @@ class FriendRequests extends Component {
       }
 
     deleteRequest(id){
-        return fetch("http://10.0.2.2:333/users/{user_id}/" + id, 
+        return fetch("http://10.0.2.2:333/friendrequests/{user_id}" + id, 
         {
         method: 'delete'
       })
@@ -88,12 +88,18 @@ class FriendRequests extends Component {
 
         const navigation = this.props.navigation;
         return(
-                    <View>
-                        <FlatList
-                        data={this.state.friendListData}
-                        renderItem={({item}) => <Text>{item.item_name} </Text>}
-                        keyExtractor={({id},index)=>id}
-                        /> 
+                    
+                       <View>
+              <FlatList
+                    data={this.state.friendRequestData}
+                    renderItem={({item}) => (
+                        <View>
+                          <Text>{item.user_givenname} {item.user_familyname}</Text>
+                        </View>
+                    )}
+                    keyExtractor={(item,index) => item.user_id.toString()}
+                  />
+           
                         
                         <TouchableOpacity 
                         style={{ backgroundColor:'lightblue', padding:10, alignItems:'center'}}

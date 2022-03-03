@@ -131,3 +131,223 @@
          //value={this.state.confirmPass}
      />
  </View>
+
+
+
+
+ <View>
+                <ScrollView>
+                    <Text style={styles.title}>Create an account</Text>
+
+                    <View style={styles.formItem}>
+                        <Text style={styles.formLabel}>First Name:</Text>
+                        <TextInput
+                            placeholder="enter first name"
+                            stye={styles.formInput}
+                            onChangeText={(firstName) => this.setState({firstName})}
+                            value={this.state.firstName}
+                        />
+                    </View>
+
+                    <View style={styles.formItem}>
+                        <Text style={styles.formLabel}>Last Name:</Text>
+                        <TextInput
+                            placeholder="enter last name"
+                            stye={styles.formInput}
+                            onChangeText={(lastName) => this.setState({lastName})}
+                            value={this.state.lastName}
+                        />
+                    </View>
+
+                    <View style={styles.formItem}>
+                        <Text style={styles.formLabel}>Email:</Text>
+                        <TextInput
+                            placeholder="enter email"
+                            stye={styles.formInput}
+                            onChangeText={(email) => this.setState({email})}
+                            value={this.state.email}
+                        />
+                    </View>
+
+                    <View style={styles.formItem}>
+                        <Text style={styles.formLabel}>Password:</Text>
+                        <TextInput
+                            placeholder="enter password"
+                            stye={styles.formInput}
+                            secureEntryText
+                            onChangeText={(password) => this.setState({password})}
+                            value={this.state.password}
+                        />
+                    </View>
+
+                   
+
+
+                    <View style={styles.formItem}>
+                        <TouchableOpacity
+                            style={styles.formTouch}
+                            onPress={() => this.addUser()}
+                        >
+                            <Text style={styles.formTouchText}>Sign Up</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    <Button
+                    title="Already have an account?"
+                    onPress={() => navigation.navigate('Login')}
+                    />
+
+                </ScrollView>
+            </View>
+
+
+
+
+
+
+
+<ScrollView>
+          <Text style={styles.title}>Login</Text>
+
+          <View style={{padding:10}}>
+              <Text style={{fontSize:15, color:'steelblue'}}>Email</Text>
+                  <TextInput
+                  placeholder="enter email"
+                  stye={{borderWidth:1, borderColor: 'lightblue', borderRadius:5}}
+                  onChangeText={(firstName) => this.setState({firstName})}
+                  value={this.state.email}
+              />
+          </View>
+
+
+
+          <View style={{padding:10}}>
+              <Text style={{fontSize:15, color:'steelblue'}}>Password</Text>
+                  <TextInput
+                  placeholder="enter email"
+                  stye={{borderWidth:1, borderColor: 'lightblue', borderRadius:5}}
+                  onChangeText={(firstName) => this.setState({firstName})}
+                  value={this.state.password}
+              />
+          </View>
+
+          <View style={{padding:10}}>
+              <TouchableOpacity
+              style={{ backgroundColor:'lightblue', padding:10, alignItems:'center'}}
+              onPress={() => this.login()}
+              >
+                  <Text style={{fontSize:20, fontWeight:'bold', color:'steelblue'}}>Login</Text>
+              </TouchableOpacity>
+          </View>
+
+          <View style={{padding:10}}>
+              <TouchableOpacity
+              style={{ backgroundColor:'lightblue', padding:10, alignItems:'center'}}
+              onPress={() => this.props.navigation.navigate("SignUp")}
+              >
+                  <Text style={{fontSize:20, fontWeight:'bold', color:'steelblue'}}>Sign Up</Text>
+              </TouchableOpacity>
+          </View>
+          
+      </ScrollView>
+    
+class HomeScreen extends Component {
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+          isLoading: true,
+          listData: []
+        }
+        
+    }
+
+    componentDidMount() {
+        this.unsubscribe = this.props.navigation.addListener('focus', () => {
+          this.checkLoggedIn();
+        });
+      
+        this.getData();
+      }
+    
+      componentWillUnmount() {
+        this.unsubscribe();
+      }
+    
+      getData = async () => {
+        const value = await AsyncStorage.getItem('@session_token');
+        return fetch("http://localhost:3333/api/1.0.0/search", {
+              'headers': {
+                'X-Authorization':  value
+              }
+            })
+            .then((response) => {
+                if(response.status === 200){
+                    return response.json()
+                }else if(response.status === 401){
+                  this.props.navigation.navigate("Login");
+                }else{
+                    throw 'Something went wrong';
+                }
+            })
+            .then((responseJson) => {
+              this.setState({
+                isLoading: false,
+                listData: responseJson
+              })
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+      }
+    
+      checkLoggedIn = async () => {
+        const value = await AsyncStorage.getItem('@session_token');
+        if (value == null) {
+            this.props.navigation.navigate('Login');
+        }
+      };
+    
+      render() {
+    
+        if (this.state.isLoading){
+          return (
+            <View
+              style={{
+                flex: 1,
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Text>Loading..</Text>
+            </View>
+          );
+        }else{
+          return (
+            <View>
+              <FlatList
+                    data={this.state.listData}
+                    renderItem={({item}) => (
+                        <View>
+                          <Text>{item.user_givenname} {item.user_familyname}</Text>
+                        </View>
+                    )}
+                    keyExtractor={(item,index) => item.user_id.toString()}
+                  />
+            </View>
+          );
+        }
+        
+      }
+    }
+
+
+
+
+
+    
+
+
+
+export default HomeScreen;

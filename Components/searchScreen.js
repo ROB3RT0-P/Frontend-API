@@ -8,7 +8,7 @@ class SearchScreen extends Component{
 
   this.state = {
       isLoading: true,
-     friendListData: []
+     searchData: []
   };
     
 }
@@ -36,23 +36,9 @@ getData(){
 
 
 
-  deleteUser(id){
-    return fetch("http://10.0.2.2:333/users/{user_id}/" + id, 
-    {
-    method: 'delete'
-  })
-  .then((response) => {
-    this.getData();
-  })
-  .then((response) => {
-    Alert.alert("User Deleted");
-  })
-  .catch((error) => {
-    console.log(error);
-  })
-}
 
-  addUser(){
+
+  addFriend(){
     let to_send = {
       id: parseInt(this.state.id),
       user_name: this.state.user_name,
@@ -61,7 +47,7 @@ getData(){
       email: this.state.email,
     };
 
-    return fetch("http://10.0.2.2:333/users/{user_id}/",
+    return fetch("http://10.0.2.2:333/user/{user_id}/friends",
     { method: 'post',
     headers: {
       'content-Type': 'application/json'

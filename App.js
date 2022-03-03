@@ -9,6 +9,9 @@ import Log from './Components/login.js';
 import HomeScreen from './Components/homeScreen.js';
 import FriendList from './Components/friendList.js';
 import SearchScreen from './Components/searchScreen.js';
+import CameraScreen from './Components/cameraScreen.js';
+import FriendRequests from './Components/friendRequests.js';
+import UserPosts from './Components/userPosts.js';
 
 const Stack = createStackNavigator();
 var isSignedIn;
@@ -24,42 +27,20 @@ class CW extends Component{
     return (
           <NavigationContainer>
               <Stack.Navigator>
-               <Stack.Screen name="FriendList" component={FriendList} />
-                  <Stack.Screen name="Home" component={HomeScreen} />
-                  <Stack.Screen name="Login" component={Log} /> 
-                 
-                  <Stack.Screen name="Search" component={SearchScreen} />
-                 
-                  <Stack.Screen name="SignUp" component={SU} />
+               
+                  <Stack.Screen name="Home" component={HomeScreen}/>
+                  <Stack.Screen name="SignUp" component={SU}/>
+                  <Stack.Screen name="Login" component={Log}/> 
+                  <Stack.Screen name="Search" component={SearchScreen}/>
+                  <Stack.Screen name="FriendList" component={FriendList}/>
+                  <Stack.Screen name="CameraScreen" component={CameraScreen}/>
+                  <Stack.Screen name="FriendRequests" component={FriendRequests}/>
+                  <Stack.Screen name="UserPosts" component={UserPosts}/>
               </Stack.Navigator>
           </NavigationContainer>
     );
  
   }
-
-  componentDidMount(){
-    console.log("mounted");
-    this.getData();
-  }
-
-  getData(){
-    return fetch("http://10.0.2.2:3333/users")
-    .then((response) => response.json())
-    .then((responseJson) => {
-      this.setState({
-        isLoading: false,
-        UserListData: responseJson
-        })
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-      console.log("data obtained");
-    }
-
-
-
-
 }
 
 
