@@ -64,7 +64,39 @@ class HomeScreen extends Component {
     }
   };
 
+  logout = async () => {
+    let token = await AsyncStorage.getItem('@session_token');
+    await AsyncStorage.removeItem('@session_token');
+    return fetch("http://localhost:3333/api/1.0.0/logout", {
+        method: 'post',
+        headers: {
+            "X-Authorization": token
+        }
+    })
+    .then((response) => {
+        if(response.status === 200){
+            this.props.navigation.navigate("Login");
+        }else if(response.status === 401){
+            this.props.navigation.navigate("Login");
+        }else{
+            throw 'Something went wrong';
+        }
+    })
+    .catch((error) => {
+        console.log(error);
+        ToastAndroid.show(error, ToastAndroid.SHORT);
+    })
+}
+
+
+  likePost(id){
+    return null;
+  };
+
+
   render() {
+
+    const navigation = this.props.navigation;
 
     if (this.state.isLoading){
       return (
@@ -75,12 +107,30 @@ class HomeScreen extends Component {
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-          <Text>Loading..</Text>
+          <Text>Loading...</Text>
         </View>
       );
     }else{
       return (
         <View>
+          
+
+                <TouchableOpacity
+                  style={{ backgroundColor:'lightblue', padding:10, alignItems:'center'}}
+                  onPress={() => this.props.navigation.navigate('UserPosts')}>
+                  <Text style={{fontSize:20, fontWeight:'bold', color:'steelblue'}}>My Posts</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={{ backgroundColor:'lightblue', padding:10, alignItems:'center'}}
+                  onPress={() => this.props.navigation.navigate('FriendList')}>
+                  <Text style={{fontSize:20, fontWeight:'bold', color:'steelblue'}}>My Friends</Text>
+                </TouchableOpacity>
+
+                
+
+
+
           <FlatList
                 data={this.state.listData}
                 renderItem={({item}) => (
@@ -88,11 +138,25 @@ class HomeScreen extends Component {
                       <Text>{item.user_givenname} {item.user_familyname}</Text>
                     
                     <Text>{item.post_text} {item.post_author} {item.post_profile}</Text>
+                    <Button title="Like"
+                    onPress={() => this.LikePost(item.id)}/>
                   </View>
                  
+
+
+
+
                 )}
                 keyExtractor={(item,index) => item.user_id.toString()}
+
+
+
               />
+              <TouchableOpacity
+                  style={{ backgroundColor:'lightblue', padding:10, alignItems:'center'}}
+                  onPress={() => this.logout()}>
+                  <Text style={{fontSize:20, fontWeight:'bold', color:'steelblue'}}>Log Out</Text>
+                </TouchableOpacity>
         </View>
       );
     }

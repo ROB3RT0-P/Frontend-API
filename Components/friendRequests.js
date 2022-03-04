@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import React, { Component } from 'react';
 import stacknavigator from 'react-navigation'
-import {View, Text, TextInput, Button, ScrollView, FlatList, Alert, TouchableOpacity, styles , flex } from 'react-native';
+import { View, Text, TextInput, Button, ScrollView, FlatList, Alert, TouchableOpacity, styles, flex } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
@@ -10,67 +10,90 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 
 class FriendRequests extends Component {
+  constructor(props) {
+    super(props);
 
-
-    constructor(props) {
-        super(props);
-
-      this.state = {
-          isLoading: true,
-         friendRequestData: []
-      };
-        
+    this.state = {
+      isLoading: true,
+      listData: []
     }
+  }
 
-    componentDidMount() {
-        this.getData();
+  componentDidMount() {
+    this.unsubscribe = this.props.navigation.addListener('focus', () => {
+      this.checkLoggedIn();
+    });
+
+    this.getData();
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe();
+  }
+
+  getData = async () => {
+    const value = await AsyncStorage.getItem('@session_token');
+    return fetch("http://localhost:3333/api/1.0.0/friendrequests", {
+      'headers': {
+        'X-Authorization': value
       }
-    
-    
-
-
-    getData(){
-        return fetch("http://10.0.2.2:3333/friendrequests")
-        .then((response)=> response.json())
-        .then((responseJson) => {
-            this.setState({
-                isLoading: false,
-                friendListData: responseJson
-            })
+    })
+      .then((response) => {
+        if (response.status === 200) {
+          return response.json()
+        } else if (response.status === 401) {
+          this.props.navigation.navigate("Login");
+        } else {
+          throw 'Something went wrong';
+        }
+      })
+      .then((responseJson) => {
+        this.setState({
+          isLoading: false,
+          listData: responseJson
         })
-        .catch((error)=> {
-            console.log(error);
-        });
-    }
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }
 
- 
-    acceptRequest(id){
-        let to_send = {
-          id: parseInt(this.state.id),
-          user_name: this.state.user_name,
-          first_name: this.state.first_name,
-          last_name: this.state.last_name,
-          email: this.state.email,
-        };
-    
-        return fetch("http://10.0.2.2:333/friendrequests/{user_id}/",
-        { method: 'post',
+  checkLoggedIn = async () => {
+    const value = await AsyncStorage.getItem('@session_token');
+    if (value == null) {
+      this.props.navigation.navigate('Login');
+    }
+  };
+
+
+  acceptRequest(id) {
+    let to_send = {
+      id: parseInt(this.state.id),
+      user_name: this.state.user_name,
+      first_name: this.state.first_name,
+      last_name: this.state.last_name,
+      email: this.state.email,
+    };
+
+    return fetch("http://10.0.2.2:333/friendrequests/{user_id}/",
+      {
+        method: 'post',
         headers: {
           'content-Type': 'application/json'
         },
         body: JSON.stringify(to_send)
-        })
-        .then((response) => {
-          Alert.alert("User Added");
-        })
-        .catch((error) => {
-          console.log(error);
-        })
-      }
+      })
+      .then((response) => {
+        Alert.alert("User Added");
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }
 
-    deleteRequest(id){
-        return fetch("http://10.0.2.2:333/friendrequests/{user_id}" + id, 
-        {
+  deleteRequest(id) {
+    return fetch("http://10.0.2.2:333/friendrequests/{user_id}" + id,
+      {
         method: 'delete'
       })
       .then((response) => {
@@ -82,36 +105,87 @@ class FriendRequests extends Component {
       .catch((error) => {
         console.log(error);
       })
-    }
-    
-    render() {
+  }
 
-        const navigation = this.props.navigation;
-        return(
-                    
-                       <View>
-              <FlatList
-                    data={this.state.friendRequestData}
-                    renderItem={({item}) => (
-                        <View>
-                          <Text>{item.user_givenname} {item.user_familyname}</Text>
-                        </View>
-                    )}
-                    keyExtractor={(item,index) => item.user_id.toString()}
-                  />
-           
-                        
-                        <TouchableOpacity 
-                        style={{ backgroundColor:'lightblue', padding:10, alignItems:'center'}}
-                        onPress={() => this.deleteUser(id)}
-                        >
-                            <Text style={{fontSize:20, fontWeight:'bold', color:'steelblue'}}>Delete Friend</Text>
-                        </TouchableOpacity>
-                    </View>
-        );
+  render() {
+
+    const navigation = this.props.navigation;
+    if (this.state.isLoading) {
+      return (
+        <View
+          style={{
+            flex: 1,
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Text>Loading..</Text>
+        </View>
+      );
+    } else {
+      return (
+        <View>
+          <TouchableOpacity
+            style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
+            onPress={() => this.props.navigation.navigate('Home')}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Home</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
+            onPress={() => this.props.navigation.navigate('FriendRequests')}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Friend Requests</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
+            onPress={() => this.props.navigation.navigate('Search')}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Search</Text>
+          </TouchableOpacity>
+
+
+
+          <FlatList
+            data={this.state.listData}
+            renderItem={({ item }) => (
+              <View>
+                <Text>{item.user_givenname} {item.user_familyname}</Text>
+
+                
+                <TouchableOpacity
+                  style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
+                  onPress={() => this.acceptRequest(id)}
+                >
+                  <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Accept Request</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
+                  onPress={() => this.deleteRequest(id)}
+                >
+                  <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Delete Request</Text>
+                </TouchableOpacity>
+              </View>
+
+
+
+
+
+            )}
+            keyExtractor={(item, index) => item.user_id.toString()}
+
+
+          />
+
+
+
+
+
+
+
+        </View>
+      );
     }
-     
+  }
 }
-
 
 export default FriendRequests;

@@ -75,6 +75,7 @@ class SU extends Component {
 
         //this.EmailValidation(this.state.email);
         //this.PassValidation(this.state.pass, this.state.confirmPass);
+if(passGood && emailGood === true){
 
         return fetch("http://localhost:3333/api/1.0.0/user", {
             method: 'post',
@@ -99,6 +100,10 @@ class SU extends Component {
         .catch((error) => {
             console.log(error);
         })
+      }
+      else{
+        return null;
+      }
     }
 
     render() {

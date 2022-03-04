@@ -10,36 +10,87 @@ class UserPosts extends Component{
   constructor(props) {
     super(props);
 
-  this.state = {
-      isLoading: true,
-     userPostData: []
-  };
-    
-}
+    this.state = {
+        isLoading: true,
+      listData: [],
+        text: ""
 
-componentDidMount() {
-    this.getData();
+    }
+      
   }
 
+componentDidMount() {
+    
+  this.unsubscribe = this.props.navigation.addListener('focus', () => {
+    this.checkLoggedIn();
+  });
 
-getData(){
-    return fetch("http://10.0.2.2:3333/user/{user_id}/post")
-    .then((response)=> response.json())
-    .then((responseJson) => {
-        this.setState({
-            isLoading: false,
-            friendListData: responseJson
-        })
-    })
-    .catch((error)=> {
-        console.log(error);
-    });
+  this.getData();
 }
 
+componentWillUnmount() {
+  this.unsubscribe();
+}
+
+getData = async () => {
+  const value = await AsyncStorage.getItem('@session_token');
+  return fetch("http://localhost:3333/api/1.0.0/user/" + 1 + "/post", { 
+        'headers': {
+          'X-Authorization':  value
+        }
+      })
+      .then((response) => {
+          if(response.status === 200){
+              return response.json()
+          }else if(response.status === 401){
+            this.props.navigation.navigate("Login");
+          }else{
+              alert
+              throw 'Something went wrong';
+          }
+      })
+      .then((responseJson) => {
+        this.setState({
+          isLoading: false,
+          listData: responseJson
+        })
+      })
+      .catch((error) => {
+          console.log(error);
+      })
+}
+
+checkLoggedIn = async () => {
+  const value = await AsyncStorage.getItem('@session_token');
+  if (value == null) {
+      this.props.navigation.navigate('Login');
+  }
+};
+
+addPost(){
+  let to_send = {
+    id: parseInt(this.state.id),
+    text: this.state.text,
+  };
+
+  return fetch("http://10.0.2.2:333/user/" + id + "/post",
+  { method: 'post',
+  headers: {
+    'content-Type': 'application/json'
+  },
+  body: JSON.stringify(to_send)
+  })
+  .then((response) => {
+    Alert.alert("Post Added");
+  })
+  .catch((error) => {
+    console.log(error);
+  })
+}
 
 
   deletePost(id){
-    return fetch("http://10.0.2.2:333/user/{user_id}/post/{post_id}" + id, 
+    return fetch("http://10.0.2.2:333/user/" + id + "/post", 
     {
     method: 'delete'
   })
@@ -47,37 +98,14 @@ getData(){
     this.getData();
   })
   .then((response) => {
-    Alert.alert("User Deleted");
+    Alert.alert("Post Deleted");
   })
   .catch((error) => {
     console.log(error);
   })
 }
 
-  addPost(){
-    let to_send = {
-      id: parseInt(this.state.id),
-      title: this.state.user_name,
-      first_name: this.state.first_name,
-      last_name: this.state.last_name,
-      email: this.state.email,
-    };
-
-    return fetch("http://10.0.2.2:333/user/{user_id}/post",
-    { method: 'post',
-    headers: {
-      'content-Type': 'application/json'
-    },
-    body: JSON.stringify(to_send)
-    })
-    .then((response) => {
-      Alert.alert("User Added");
-    })
-    .catch((error) => {
-      console.log(error);
-    })
-  }
-
+  
   updatePost(){
     let to_send = {
       id: parseInt(this.state.id),
@@ -87,7 +115,7 @@ getData(){
       email: this.state.email,
     };
 
-    return fetch("http://10.0.2.2:333/users/{user_id}/",
+    return fetch("http://10.0.2.2:333/user/" + id + "/post" + id,
     { method: 'patch',
     headers: {
       'content-Type': 'application/json'
@@ -95,7 +123,7 @@ getData(){
     body: JSON.stringify(to_send)
     })
     .then((response) => {
-      Alert.alert("User Added");
+      Alert.alert("Post Updated");
     })
     .catch((error) => {
       console.log(error);
@@ -122,16 +150,29 @@ getData(){
     }else{
       return (
         <View>
-          <FlatList
-                data={this.state.userPostData}
-                renderItem={({item}) => (
-                    <View>
-                      <Text>{item.user_givenname} {item.user_familyname}</Text>
-                    </View>
-                )}
-                keyExtractor={(item,index) => item.user_id.toString()}
-              />
-        </View>
+                <TouchableOpacity
+                  style={{ backgroundColor:'lightblue', padding:10, alignItems:'center'}}
+                  onPress={() => this.props.navigation.navigate('Home')}>
+                  <Text style={{fontSize:20, fontWeight:'bold', color:'steelblue'}}>Home</Text>
+                </TouchableOpacity>
+        <FlatList
+              data={this.state.listData}
+              renderItem={({item}) => (
+                  <View>
+                  
+                  <Text>{item.post_text} {item.post_author}</Text>
+
+                <TouchableOpacity
+                  style={{ backgroundColor:'lightblue', padding:10, alignItems:'center'}}
+                  onPress={() => this.deletePost(item.id)}>
+                  <Text style={{fontSize:20, fontWeight:'bold', color:'steelblue'}}>Delete Post</Text>
+                </TouchableOpacity>
+
+                </View>
+              )}
+              keyExtractor={(item,index) => item.user_id.toString()}
+            />
+      </View>
       );
     }
   }
