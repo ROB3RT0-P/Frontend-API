@@ -1,12 +1,11 @@
 import 'react-native-gesture-handler';
 import React, { Component } from 'react';
 import stacknavigator from 'react-navigation'
-import { Button, FlatList, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import { View, ScrollView, Text, TextInput, TouchableOpacity, styles , flex} from 'react-native';
+import { View, ScrollView, Text, TextInput, TouchableOpacity, styles , flex, Button, FlatList, Alert } from 'react-native';
 
 class HomeScreen extends Component {
   constructor(props){

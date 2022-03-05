@@ -45,8 +45,11 @@ class FriendList extends Component {
         } else if (response.status === 401) {
           this.props.navigation.navigate("Login");
 
-        
+        } else if (response.status === 403) {
+          alert('can only view the friends of yourself or friends.');;
 
+        }else if (response.status === 404) {
+          alert('No friends found, add some by sending a friend request.');
         } else {
 
           alert('Something went wrong');

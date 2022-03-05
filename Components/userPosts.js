@@ -12,8 +12,9 @@ class UserPosts extends Component{
 
     this.state = {
         isLoading: true,
+        text: "",
       listData: [],
-        text: ""
+      
 
     }
       
@@ -34,20 +35,28 @@ componentWillUnmount() {
 
 getData = async () => {
   const value = await AsyncStorage.getItem('@session_token');
-  return fetch("http://localhost:3333/api/1.0.0/user/" + 1 + "/post", { 
+  return fetch("http://localhost:3333/api/1.0.0/user/" + id + "/post", { 
         'headers': {
           'X-Authorization':  value
         }
       })
       .then((response) => {
-          if(response.status === 200){
-              return response.json()
-          }else if(response.status === 401){
-            this.props.navigation.navigate("Login");
-          }else{
-              alert
-              throw 'Something went wrong';
-          }
+        if (response.status === 200) {
+          return response.json()
+
+        } else if (response.status === 401) {
+          this.props.navigation.navigate("Login");
+
+        } else if (response.status === 403) {
+          alert('can only view the friends of yourself or friends.');;
+
+        }else if (response.status === 404) {
+          alert('No posts found, start by adding one.');
+        } else {
+
+          alert('Something went wrong');
+          throw 'Something went wrong';
+        }
       })
       .then((responseJson) => {
         this.setState({
@@ -67,26 +76,7 @@ checkLoggedIn = async () => {
   }
 };
 
-addPost(){
-  let to_send = {
-    id: parseInt(this.state.id),
-    text: this.state.text,
-  };
 
-  return fetch("http://10.0.2.2:333/user/" + id + "/post",
-  { method: 'post',
-  headers: {
-    'content-Type': 'application/json'
-  },
-  body: JSON.stringify(to_send)
-  })
-  .then((response) => {
-    Alert.alert("Post Added");
-  })
-  .catch((error) => {
-    console.log(error);
-  })
-}
 
 
   deletePost(id){
@@ -154,6 +144,12 @@ addPost(){
                   style={{ backgroundColor:'lightblue', padding:10, alignItems:'center'}}
                   onPress={() => this.props.navigation.navigate('Home')}>
                   <Text style={{fontSize:20, fontWeight:'bold', color:'steelblue'}}>Home</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={{ backgroundColor:'lightblue', padding:10, alignItems:'center'}}
+                  onPress={() => this.props.navigation.navigate('NewPost')}>
+                  <Text style={{fontSize:20, fontWeight:'bold', color:'steelblue'}}>Create New Post</Text>
                 </TouchableOpacity>
         <FlatList
               data={this.state.listData}

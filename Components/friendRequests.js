@@ -38,14 +38,21 @@ class FriendRequests extends Component {
         'X-Authorization': value
       }
     })
-      .then((response) => {
-        if (response.status === 200) {
-          return response.json()
-        } else if (response.status === 401) {
-          this.props.navigation.navigate("Login");
-        } else {
-          throw 'Something went wrong';
-        }
+    .then((response) => {
+      if (response.status === 200) {
+        return response.json()
+
+      } else if (response.status === 401) {
+        this.props.navigation.navigate("Login");
+
+      } else if (response.status === 403) {
+        alert('can only view the friends of yourself or friends.');;
+
+      } else {
+
+        alert('Something went wrong / No requests found');
+        throw 'Something went wrong';
+      }
       })
       .then((responseJson) => {
         this.setState({

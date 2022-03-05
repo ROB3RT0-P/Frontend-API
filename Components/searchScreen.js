@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { View, ScrollView, Text, TextInput, TouchableOpacity, flex, Button, FlatList, Alert, StyleSheet } from 'react-native';
 
 
 class SearchScreen extends Component{
@@ -14,25 +14,51 @@ class SearchScreen extends Component{
 }
 
 componentDidMount() {
-    this.getData();
-  }
+  this.unsubscribe = this.props.navigation.addListener('focus', () => {
+    this.checkLoggedIn();
+  });
 
-
-
-
-getData(){
-    return fetch("http://10.0.2.2:3333/search")
-    .then((response)=> response.json())
-    .then((responseJson) => {
-        this.setState({
-            isLoading: false,
-            friendListData: responseJson
-        })
-    })
-    .catch((error)=> {
-        console.log(error);
-    });
+  this.getData();
 }
+
+componentWillUnmount() {
+  this.unsubscribe();
+}
+
+
+checkLoggedIn = async () => {
+  const value = await AsyncStorage.getItem('@session_token');
+  if (value == null) {
+      this.props.navigation.navigate('Login');
+  }
+};
+
+  getData = async () => {
+    const value = await AsyncStorage.getItem('@session_token');
+    return fetch("http://localhost:3333/api/1.0.0/search", {
+          'headers': {
+            'X-Authorization':  value
+          }
+        })
+        .then((response) => {
+            if(response.status === 200){
+                return response.json()
+            }else if(response.status === 401){
+              this.props.navigation.navigate("Login");
+            }else{
+                throw 'Something went wrong';
+            }
+        })
+        .then((responseJson) => {
+          this.setState({
+            isLoading: false,
+            listData: responseJson
+          })
+        })
+        .catch((error) => {
+            console.log(error);
+        })
+  }
 
 
 
@@ -63,17 +89,49 @@ getData(){
   }
 
   render(){
-    if(this.state.hasPermission){
+    
       return(
-         null
-      );
-    }else{
-      return(
-        <Text></Text>
+        <View>
+          
+
+                <TouchableOpacity
+                  style={{ backgroundColor:'lightblue', padding:10, alignItems:'center'}}
+                  onPress={() => this.props.navigation.navigate('Home')}>
+                  <Text style={{fontSize:20, fontWeight:'bold', color:'steelblue'}}>Home</Text>
+                </TouchableOpacity>
+
+               
+                
+
+
+
+          <FlatList
+                data={this.state.listData}
+                renderItem={({item}) => (
+                    <View>
+                      <Text>{item.user_givenname} {item.user_familyname}</Text>
+                    
+                    
+                    <Button title="Like"
+                    onPress={() => this.LikePost(item.id)}/>
+                  </View>
+                 
+
+
+
+
+                )}
+                keyExtractor={(item,index) => item.user_id.toString()}
+
+
+
+              />
+              
+        </View>
       );
     }
   }
-}
+
 
 export default SearchScreen;
 
