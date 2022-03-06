@@ -112,7 +112,11 @@ class HomeScreen extends Component {
     }else{
       return (
         <View>
-          
+                <TouchableOpacity
+                  style={{ backgroundColor:'lightblue', padding:10, alignItems:'center'}}
+                  onPress={() => this.props.navigation.navigate('UserScreen')}>
+                  <Text style={{fontSize:20, fontWeight:'bold', color:'steelblue'}}>My Details</Text>
+                </TouchableOpacity>
 
                 <TouchableOpacity
                   style={{ backgroundColor:'lightblue', padding:10, alignItems:'center'}}
@@ -126,7 +130,7 @@ class HomeScreen extends Component {
                   <Text style={{fontSize:20, fontWeight:'bold', color:'steelblue'}}>My Friends</Text>
                 </TouchableOpacity>
 
-                
+               
 
 
 
@@ -140,15 +144,9 @@ class HomeScreen extends Component {
                     <Button title="Like"
                     onPress={() => this.LikePost(item.id)}/>
                   </View>
-                 
-
-
-
 
                 )}
                 keyExtractor={(item,index) => item.user_id.toString()}
-
-
 
               />
               <TouchableOpacity
