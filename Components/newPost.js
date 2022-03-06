@@ -14,10 +14,11 @@ class NewPost extends Component {
     this.state = {
       isLoading: true,
       listData: [],
-      post_text: "",
-      post_author: "", 
-      post_profile: ""
-    }
+      post_text: '',
+
+
+    };
+
   }
 
   componentDidMount() {
@@ -32,9 +33,16 @@ class NewPost extends Component {
     this.unsubscribe();
   }
 
+  checkLoggedIn = async () => {
+    const value = await AsyncStorage.getItem('@session_token');
+    if (value == null) {
+      this.props.navigation.navigate('Login');
+    }
+  };
+
   getData = async () => {
     const value = await AsyncStorage.getItem('@session_token');
-    return fetch("http://localhost:3333/api/1.0.0/user/" + id + "/post", {
+    return fetch("http://localhost:3333/api/1.0.0/search/", {
       'headers': {
         'X-Authorization': value
       }
@@ -69,36 +77,51 @@ class NewPost extends Component {
   };
 
 
-  addPost = () => {
+  addPost = async () => {
     let to_send = {
-      id: parseInt(this.state.id),
       post_text: this.state.post_text,
-     };
+    };
 
-    return fetch("http://10.0.2.2:3333/api/1.0.0/user/" + id + "/post",
-      {
-        method: 'post',
-        headers: {
-          'content-Type': 'application/json'
-        },
-        body: JSON.stringify(this.to_send)
-      })
+    const value = await AsyncStorage.getItem('@session_token');
+    return fetch("http://localhost:3333/api/1.0.0/user/" + id + "/post", {
+      method: 'post',
+      headers: {
+        'X-Authorization': value,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(to_send)
+    })
       .then((response) => {
-        alert("Post Added");
+        if (response.status === 201) {
+          return response.json();
+        } else if (response.status === 401) {
+          alert("You're logged out, please log in");
+          this.props.navigation.navigate("Login");
+        } else if (response.status === 404) {
+          alert("User not found");
+        } else if (response.status === 500) {
+          alert("Server Error");
+        } else {
+          throw 'Something went wrong';
+        }
+      })
+      .then((responseJson) => {
+        console.log("Post created: ", responseJson, to_send);
+        this.props.navigation.navigate("UserPosts");
       })
       .catch((error) => {
         console.log(error);
       })
   }
 
-
-  savePost() {
+  
+  savePost = async () => {
     let to_send = {
       id: parseInt(this.state.id),
       text: this.state.text,
     };
 
-    return fetch("http://10.0.2.2:333/user/" + id + "/post",
+    return fetch("http://localhost:3333/api/1.0.0/user/" + id + "/post",
       {
         method: 'post',
         headers: {
@@ -107,13 +130,29 @@ class NewPost extends Component {
         body: JSON.stringify(to_send)
       })
       .then((response) => {
-        Alert.alert("Post Saved");
+        if (response.status === 201) {
+          return response.json()
+        } else if (response.status === 401) {
+          alert("You're logged out, please log in");
+          this.props.navigation.navigate("Login");
+        } else if (response.status === 404) {
+          alert("User not found");
+        } else if (response.status === 500) {
+          alert("Server Error");
+        } else {
+          throw 'Something went wrong';
+        }
+
+      })
+      .then(async (responseJson) => {
+        console.log(responseJson);
+        await AsyncStorage.setItem('@draft', responseJson.token);
+        this.props.navigation.navigate("UserPosts");
       })
       .catch((error) => {
         console.log(error);
       })
   }
-
 
 
   render() {
@@ -134,39 +173,45 @@ class NewPost extends Component {
       );
     } else {
       return (
+        <View>
+          <ScrollView>
 
-        <ScrollView>
+            <TouchableOpacity
+              style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
+              onPress={() => this.props.navigation.navigate('UserPosts')}>
+              <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Home</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
-            onPress={() => this.props.navigation.navigate('UserPosts')}>
-            <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Home</Text>
-          </TouchableOpacity>
-         
-          <TextInput
-            placeholder="Write your post here..."
-            onChangeText={(post_text) => this.setState({post_text})}
-            value={this.state.post_text}
-            style={{ padding: 5, borderWidth: 1, margin: 5 }}
-          />
+            <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', color: 'steelblue' }}>New Post</Text>
+            <TextInput
+              placeholder="Write your post here..."
+              onChangeText={(post_text) => this.setState({post_text})}
+              value={this.state.post_text}
+              multiline={true}
+              style={{ padding: 5, borderWidth: 1, margin: 5 }}
+            />
 
-          <TouchableOpacity
-            style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
-            onPress={() => this.savePost()}>
-            <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Save Draft</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
+              onPress={() => this.savePost()}>
+              <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Save Draft</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
-            onPress={() => this.addPost()}>
-            <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Post</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
+              onPress={() => this.addPost()}>
+              <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Post</Text>
+            </TouchableOpacity>
 
-        </ScrollView>
-        );
-      }
+
+          </ScrollView>
+
+
+        </View>
+      );
     }
   }
+}
 
 
 

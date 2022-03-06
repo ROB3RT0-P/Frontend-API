@@ -12,7 +12,6 @@ class UserPosts extends Component{
 
     this.state = {
         isLoading: true,
-        text: "",
       listData: [],
       
 
