@@ -14,9 +14,6 @@ class NewPost extends Component {
     this.state = {
       isLoading: true,
       listData: [],
-      post_text: '',
-
-
     };
 
   }
@@ -27,7 +24,14 @@ class NewPost extends Component {
     });
 
     this.getData();
+    this.getUserId();
   }
+
+getUserId = async() => {
+    let global_id = await AsyncStorage.getItem('@user_id');
+    id = global_id;
+    console.log("trasferring global id '" + global_id + "' to local variable. Локальная переменная теперь: '" + id + "'")
+}
 
   componentWillUnmount() {
     this.unsubscribe();
@@ -39,6 +43,8 @@ class NewPost extends Component {
       this.props.navigation.navigate('Login');
     }
   };
+
+
 
   getData = async () => {
     const value = await AsyncStorage.getItem('@session_token');
@@ -64,6 +70,12 @@ class NewPost extends Component {
           listData: responseJson
         })
       })
+      .then((responseJson) => {
+        this.setState({
+          isLoading: false,
+          listData: responseJson
+        })
+      })
       .catch((error) => {
         console.log(error);
       })
@@ -79,9 +91,8 @@ class NewPost extends Component {
 
   addPost = async () => {
     let to_send = {
-      post_text: this.state.post_text,
+      text: this.state.text,
     };
-
     const value = await AsyncStorage.getItem('@session_token');
     return fetch("http://localhost:3333/api/1.0.0/user/" + id + "/post", {
       method: 'post',
@@ -115,43 +126,14 @@ class NewPost extends Component {
   }
 
   
-  savePost = async () => {
+  saveDraft = async () => {
     let to_send = {
-      id: parseInt(this.state.id),
       text: this.state.text,
     };
-
-    return fetch("http://localhost:3333/api/1.0.0/user/" + id + "/post",
-      {
-        method: 'post',
-        headers: {
-          'content-Type': 'application/json'
-        },
-        body: JSON.stringify(to_send)
-      })
-      .then((response) => {
-        if (response.status === 201) {
-          return response.json()
-        } else if (response.status === 401) {
-          alert("You're logged out, please log in");
-          this.props.navigation.navigate("Login");
-        } else if (response.status === 404) {
-          alert("User not found");
-        } else if (response.status === 500) {
-          alert("Server Error");
-        } else {
-          throw 'Something went wrong';
-        }
-
-      })
-      .then(async (responseJson) => {
-        console.log(responseJson);
-        await AsyncStorage.setItem('@draft', responseJson.token);
+        await AsyncStorage.setItem('@user_draft', JSON.stringify(to_send));
+        let user_draft = await AsyncStorage.getItem('@user_draft');
         this.props.navigation.navigate("UserPosts");
-      })
-      .catch((error) => {
-        console.log(error);
-      })
+        console.log(user_draft)
   }
 
 
@@ -185,15 +167,15 @@ class NewPost extends Component {
             <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', color: 'steelblue' }}>New Post</Text>
             <TextInput
               placeholder="Write your post here..."
-              onChangeText={(post_text) => this.setState({post_text})}
-              value={this.state.post_text}
+              onChangeText={(text) => this.setState({text})}
+              value={this.state.text}
               multiline={true}
               style={{ padding: 5, borderWidth: 1, margin: 5 }}
             />
 
             <TouchableOpacity
               style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
-              onPress={() => this.savePost()}>
+              onPress={() => this.saveDraft()}>
               <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Save Draft</Text>
             </TouchableOpacity>
 
@@ -213,6 +195,14 @@ class NewPost extends Component {
   }
 }
 
-
+const stylesNewPostScreen = StyleSheet.create({
+  baseText: {
+    fontFamily: "Cochin"
+  },
+  titleText: {
+    fontSize: 20,
+    fontWeight: "bold"
+  }
+});
 
 export default NewPost;

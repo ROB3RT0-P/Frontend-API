@@ -64,23 +64,21 @@ class SearchScreen extends Component {
 
 
 
-  addFriend = (id) => {
-
-
-    return fetch("http://10.0.2.2:3333/api/1.0.0/user/" + id + "/friends",
-      {
+  addFriend = async (user_id) => {
+  const value = await AsyncStorage.getItem('@session_token');
+    return fetch("http://10.0.2.2:3333/api/1.0.0/user/" + user_id + "/friends", {
         method: 'post',
         headers: {
           'content-Type': 'application/json'
         },
-        body: JSON.stringify(this.state)
-
+        body: JSON.stringify()
       })
       .then((response) => {
         if (response.status === 200) {
+          alert("User added");
           return response.json()
         } else if (response.status === 401) {
-          alert("You're looged out, please log in");
+          alert("You're logged out, please log in");
           this.props.navigation.navigate("Login");
         } else if (response.status === 403) {
           alert("User is already added as a friend");
@@ -123,7 +121,7 @@ class SearchScreen extends Component {
 
               <TouchableOpacity
                 style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
-                onPress={() => this.addFriend(item.id)}>
+                onPress={() => this.addFriend(item.user_id)}>
                 <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Add Friend</Text>
               </TouchableOpacity>
 

@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import React, { Component } from 'react';
 import stacknavigator from 'react-navigation'
-import { View, Text, TextInput, Button, ScrollView, FlatList, Alert, TouchableOpacity, styles, flex } from 'react-native';
+import { View, Text, TextInput, Button, ScrollView, FlatList, Alert, TouchableOpacity, styles, StyleSheet, flex } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
@@ -74,21 +74,38 @@ class FriendList extends Component {
     }
   };
 
-  deleteUser(id) {
-    return fetch("http://10.0.2.2:333/users/{user_id}/" + id,
+  deleteFriend = async (id) => {
+    return fetch("http://10.0.2.2:333/user/"+ id + "/friends/" ,
       {
-        method: 'delete'
+        method: 'delete',
+        headers: {
+          'X-Authorization': value,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify()
       })
-      .then((response) => {
-        this.getData();
-      })
-      .then((response) => {
-        Alert.alert("User Deleted");
-      })
-      .catch((error) => {
-        console.log(error);
-      })
-  }
+        .then((response) => {
+          if (response.status === 200) {
+            return response.json();
+          } else if (response.status === 401) {
+            alert("You're logged out, please log in");
+            this.props.navigation.navigate("Login");
+          } else if (response.status === 404) {
+            alert("User not found");
+          } else if (response.status === 500) {
+            alert("Server Error");
+          } else {
+            throw 'Something went wrong';
+          }
+        })
+        .then((responseJson) => {
+          console.log("Post created: ", responseJson, to_send);
+          this.props.navigation.navigate("UserPosts");
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+    }
 
   render() {
 
@@ -139,7 +156,7 @@ class FriendList extends Component {
                   style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
                   onPress={() => this.deleteUser(id)}
                 >
-                  <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Delete Friend</Text>
+                  <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>not needed - Delete Friend</Text>
                 </TouchableOpacity>
               </View>
 
@@ -165,5 +182,14 @@ class FriendList extends Component {
   }
 }
 
+const stylesFriendList = StyleSheet.create({
+  baseText: {
+    fontFamily: "Cochin"
+  },
+  titleText: {
+    fontSize: 20,
+    fontWeight: "bold"
+  }
+});
 
 export default FriendList;

@@ -4,19 +4,20 @@ import { View, Text, TextInput, Button, FlatList, Alert } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import SU from './Components/signUpPage.js';
-import Log from './Components/login.js';
+import SU from './Components/signUpScreen.js';
+import Log from './Components/loginScreen.js';
 import HomeScreen from './Components/homeScreen.js';
 import FriendList from './Components/friendList.js';
 import SearchScreen from './Components/searchScreen.js';
 import CameraScreen from './Components/cameraScreen.js';
 import FriendRequests from './Components/friendRequests.js';
 import UserPosts from './Components/userPosts.js';
-import NewPost from './Components/newPost.js';
-import UserScreen from './Components/userPage.js';
+import NewPost from './Components/newPostScreen.js';
+import UserScreen from './Components/userScreen.js';
 
 const Stack = createStackNavigator();
 var isSignedIn;
+
 class CW extends Component{
 
   constructor(props){

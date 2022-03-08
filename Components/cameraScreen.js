@@ -18,9 +18,8 @@ class CameraScreen extends Component{
   }
 
   sendToServer = async (data) => {
-      // Get these from AsyncStorage
-      let id = 10;
-      let token = "a3b0601e54775e60b01664b1a5273d54"
+    const value = await AsyncStorage.getItem('@session_token');
+    const id = await AsyncStorage.getItem('@user_id');
 
       let res = await fetch(data.base64);
       let blob = await res.blob();

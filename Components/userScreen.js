@@ -1,35 +1,31 @@
-import React, { Component } from 'react';
 import 'react-native-gesture-handler';
+import React, { Component } from 'react';
 import stacknavigator from 'react-navigation'
-import { View, Text, TextInput, Button, ScrollView, FlatList, Alert, TouchableOpacity, StyleSheet, flex } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-class UserPosts extends Component {
+import { View, ScrollView, Text, TextInput, TouchableOpacity, styles, StyleSheet, flex, Button, FlatList, Alert } from 'react-native';
+
+class UserScreen extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       isLoading: true,
       listData: [],
-
-
+      first_name: '',
+      last_name:'',
     }
-
   }
 
   componentDidMount() {
-
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
       this.checkLoggedIn();
     });
 
     this.getData();
-
   }
-
-
 
   componentWillUnmount() {
     this.unsubscribe();
@@ -38,34 +34,33 @@ class UserPosts extends Component {
   getData = async () => {
     const value = await AsyncStorage.getItem('@session_token');
     const id = await AsyncStorage.getItem('@user_id');
-    return fetch("http://localhost:3333/api/1.0.0/user/" + id + "/post", {
+
+    return fetch("http://localhost:3333/api/1.0.0/user/" + id, {
       'headers': {
-        'X-Authorization': value,
+        'X-Authorization': value
       }
     })
       .then((response) => {
         if (response.status === 200) {
           return response.json()
-
         } else if (response.status === 401) {
           this.props.navigation.navigate("Login");
-
-        } else if (response.status === 403) {
-          alert('can only view the friends of yourself or friends.');;
-
         } else if (response.status === 404) {
-          alert('No posts found, start by adding one.');
-        } else {
+          alert("Not found");
+        } else if (response.status === 500) {
+          alert("Server Error");
 
-          alert('Something went wrong');
+        } else {
           throw 'Something went wrong';
         }
       })
       .then((responseJson) => {
+        
         this.setState({
           isLoading: false,
           listData: responseJson
         })
+        console.log(this.state.listData)
       })
       .catch((error) => {
         console.log(error);
@@ -80,36 +75,46 @@ class UserPosts extends Component {
   };
 
 
+  updateUser = async () => {
+    let to_send = {
+    };
 
+    if (this.state.unit_price != this.state.orig_unit_price){
+      to_send['first_name'] = parseInt(this.state.first_name);
+    }
 
-  deletePost = async (id) => {
+    if (this.state.quantity != this.state.orig_quantity){
+      to_send['last_name'] = parseInt(this.state.last_name);
+    }
+
+    console.log(JSON.stringify(to_send));
+
+    const id = await AsyncStorage.getItem('@user_id');
     const value = await AsyncStorage.getItem('@session_token');
-    const id2 = await AsyncStorage.getItem('@user_id');
-    return fetch("http://localhost:3333/api/1.0.0/user/" + id2 + "/post/" + id, {
-      method: 'delete',
+    return fetch("http://localhost:3333/api/1.0.0/user/" + id, {
+      method: 'patch',
       headers: {
         'X-Authorization': value,
         'Content-Type': 'application/json'
       },
+      body: JSON.stringify({first_name: to_send})
     })
       .then((response) => {
         if (response.status === 200) {
-          Alert.alert("Post Deleted");
           return response.json();
         } else if (response.status === 401) {
-          alert("unauthorised");
+          alert("You're logged out, please log in");
           this.props.navigation.navigate("Login");
-        } else if (response.status === 403) {
-          alert("Forbidden - You can only delete your own posts");
         } else if (response.status === 404) {
-          alert("Not found");
+          alert("User not found");
         } else if (response.status === 500) {
           alert("Server Error");
         } else {
           throw 'Something went wrong';
         }
       })
-      .then((response) => {
+      .then((responseJson) => {
+        console.log("Username updated: ", responseJson, to_send);
         this.getData();
       })
       .catch((error) => {
@@ -118,35 +123,9 @@ class UserPosts extends Component {
   }
 
 
-  updatePost() {
-    let to_send = {
-      id: parseInt(this.state.id),
-      user_name: this.state.user_name,
-      first_name: this.state.first_name,
-      last_name: this.state.last_name,
-      email: this.state.email,
-    };
-
-    return fetch("http://10.0.2.2:333/user/" + id + "/post" + id,
-      {
-        method: 'patch',
-        headers: {
-          'content-Type': 'application/json'
-        },
-        body: JSON.stringify(to_send)
-      })
-      .then((response) => {
-        Alert.alert("Post Updated");
-      })
-      .catch((error) => {
-        console.log(error);
-      })
-  }
-
-
-
 
   render() {
+    const navigation = this.props.navigation;
 
     if (this.state.isLoading) {
       return (
@@ -157,12 +136,15 @@ class UserPosts extends Component {
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-          <Text>Loading..</Text>
+          <Text>Loading...</Text>
         </View>
       );
     } else {
       return (
+        
         <View>
+
+
           <TouchableOpacity
             style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
             onPress={() => this.props.navigation.navigate('Home')}>
@@ -171,55 +153,45 @@ class UserPosts extends Component {
 
           <TouchableOpacity
             style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
-            onPress={() => this.props.navigation.navigate('NewPost')}>
-            <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Create New Post</Text>
+            onPress={() => this.props.navigation.navigate('CameraScreen')}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Update Picture</Text>
           </TouchableOpacity>
-          <FlatList
-            data={this.state.listData}
-            renderItem={({ item }) => (
-              <View>
-                <Text>{item.author.first_name} {item.author.last_name}</Text>
-                <Text>{item.text}</Text>
 
-                <TouchableOpacity
-                  style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
-                  onPress={() => this.deletePost(item.post_id)}>
-                  <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Delete Post</Text>
-                </TouchableOpacity>
+          <Text style={stylesUserPage.titleText}>Name: {this.state.listData.first_name} </Text>
+          <Text style={stylesUserPage.titleText}>Surname: {this.state.listData.last_name} </Text>
+          <Text style={stylesUserPage.titleText}>Email: {this.state.listData.email} </Text>
+          <Text style={stylesUserPage.titleText}>Friends: {this.state.listData.friend_count} </Text>
+          <Text style={stylesUserPage.titleText}>User ID: {this.state.listData.user_id} </Text>
 
-              </View>
-            )}
-            keyExtractor={(item, index) => item.post_id.toString()}
-          />
+          <TextInput
+              placeholder="Change first_name"
+              onChangeText={(first_name) => this.setState({first_name})}
+              value={this.state.first_name}
+              multiline={false}
+              style={{ padding: 5, borderWidth: 1, margin: 5 }}
+            />
+
+          <TouchableOpacity
+            style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
+            onPress={() => this.updateUser(this.state.listData)}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Update My Information</Text>
+          </TouchableOpacity>
+
         </View>
       );
     }
+
   }
 }
 
-
-export default UserPosts;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+const stylesUserPage = StyleSheet.create({
+  baseText: {
+    fontFamily: "Cochin"
   },
-  camera: {
-    flex: 1,
-  },
-  buttonContainer: {
-    flex: 1,
-    backgroundColor: 'transparent',
-    flexDirection: 'row',
-    margin: 20,
-  },
-  button: {
-    flex: 0.1,
-    alignSelf: 'flex-end',
-    alignItems: 'center',
-  },
-  text: {
-    fontSize: 18,
-    color: 'white',
-  },
+  titleText: {
+    fontSize: 20,
+    fontWeight: "bold"
+  }
 });
+
+export default UserScreen;

@@ -42,12 +42,18 @@ class Log extends Component {
       .then(async (responseJson) => {
         console.log(responseJson);
         await AsyncStorage.setItem('@session_token', responseJson.token);
+        await AsyncStorage.setItem('@user_id', JSON.stringify(responseJson.id));
+        let global_id = await AsyncStorage.getItem('@user_id');
         this.props.navigation.navigate("Home");
+        console.log(global_id)
       })
       .catch((error) => {
         console.log(error);
       })
   }
+
+
+  
 
   render() {
 
