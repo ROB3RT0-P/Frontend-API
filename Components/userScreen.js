@@ -75,15 +75,15 @@ class UserScreen extends Component {
   };
 
 
-  updateUser = async () => {
+  updateUser = async (id2) => {
     let to_send = {
     };
 
-    if (this.state.unit_price != this.state.orig_unit_price){
+    if (this.state.first_name != this.state.orig_first_name){
       to_send['first_name'] = parseInt(this.state.first_name);
     }
 
-    if (this.state.quantity != this.state.orig_quantity){
+    if (this.state.last_name != this.state.orig_last_name){
       to_send['last_name'] = parseInt(this.state.last_name);
     }
 
@@ -91,13 +91,13 @@ class UserScreen extends Component {
 
     const id = await AsyncStorage.getItem('@user_id');
     const value = await AsyncStorage.getItem('@session_token');
-    return fetch("http://localhost:3333/api/1.0.0/user/" + id, {
+    return fetch("http://localhost:3333/api/1.0.0/user/" + id2, {
       method: 'patch',
       headers: {
         'X-Authorization': value,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({first_name: to_send})
+      body: JSON.stringify({to_send})
     })
       .then((response) => {
         if (response.status === 200) {

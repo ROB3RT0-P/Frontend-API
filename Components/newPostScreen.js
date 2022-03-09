@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import { View, ScrollView, Text, TextInput, TouchableOpacity, styles, flex, Button, FlatList, Alert } from 'react-native';
+import { View, ScrollView, Text, TextInput, StyleSheet, TouchableOpacity, styles, flex, Button, FlatList, Alert } from 'react-native';
 
 class NewPost extends Component {
   constructor(props) {

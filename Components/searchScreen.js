@@ -64,18 +64,23 @@ class SearchScreen extends Component {
 
 
 
-  addFriend = async (user_id) => {
+  addFriend = async (id) => {
+  //const id = await AsyncStorage.getItem('@user_id');
   const value = await AsyncStorage.getItem('@session_token');
-    return fetch("http://10.0.2.2:3333/api/1.0.0/user/" + user_id + "/friends", {
+    return fetch("http://localhost:3333/api/1.0.0/user/" + id + "/friends", {
         method: 'post',
         headers: {
-          'content-Type': 'application/json'
+          'X-Authorization': value,
+          //'content-Type': 'application/json'
         },
-        body: JSON.stringify()
       })
       .then((response) => {
+//200 and 201 are both included because the documentation says 200 but the server responds with 201.
         if (response.status === 200) {
-          alert("User added");
+          alert("200 - User added");
+          return response.json()
+        } else if (response.status === 201) {
+          alert("201 - User added");
           return response.json()
         } else if (response.status === 401) {
           alert("You're logged out, please log in");
@@ -89,7 +94,6 @@ class SearchScreen extends Component {
         } else {
           throw 'Something went wrong';
         }
-
       })
       .catch((error) => {
         console.log(error);
@@ -97,10 +101,8 @@ class SearchScreen extends Component {
   }
 
   render() {
-
     return (
       <View>
-
 
         <TouchableOpacity
           style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
@@ -108,16 +110,11 @@ class SearchScreen extends Component {
           <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Home</Text>
         </TouchableOpacity>
 
-
-
-
-
-
         <FlatList
           data={this.state.listData}
           renderItem={({ item }) => (
             <View>
-              <Text>{item.user_givenname} {item.user_familyname}</Text>
+              <Text>{item.user_givenname} {item.user_familyname} - [{item.user_id}]</Text>
 
               <TouchableOpacity
                 style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
@@ -125,13 +122,7 @@ class SearchScreen extends Component {
                 <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Add Friend</Text>
               </TouchableOpacity>
 
-
             </View>
-
-
-
-
-
           )}
           keyExtractor={(item, index) => item.user_id.toString()}
 

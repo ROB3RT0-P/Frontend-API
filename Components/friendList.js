@@ -3,8 +3,6 @@ import React, { Component } from 'react';
 import stacknavigator from 'react-navigation'
 import { View, Text, TextInput, Button, ScrollView, FlatList, Alert, TouchableOpacity, styles, StyleSheet, flex } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
@@ -32,9 +30,10 @@ class FriendList extends Component {
   }
 
   getData = async () => {
+    const id = await AsyncStorage.getItem('@user_id');
     const value = await AsyncStorage.getItem('@session_token');
-    return fetch("http://localhost:3333/api/1.0.0/user/ "+ id + "/friends", {
-      'headers': {
+    return fetch("http://localhost:3333/api/1.0.0/user/" + id + "/friends", {
+    'headers': {
         'X-Authorization': value
       }
     })
@@ -51,7 +50,6 @@ class FriendList extends Component {
         }else if (response.status === 404) {
           alert('No friends found, add some by sending a friend request.');
         } else {
-
           alert('Something went wrong');
           throw 'Something went wrong';
         }
@@ -61,6 +59,9 @@ class FriendList extends Component {
           isLoading: false,
           listData: responseJson
         })
+      })
+      .then((responseJson) => {
+        console.log(id + " = " + responseJson)
       })
       .catch((error) => {
         console.log(error);
@@ -73,39 +74,6 @@ class FriendList extends Component {
       this.props.navigation.navigate('Login');
     }
   };
-
-  deleteFriend = async (id) => {
-    return fetch("http://10.0.2.2:333/user/"+ id + "/friends/" ,
-      {
-        method: 'delete',
-        headers: {
-          'X-Authorization': value,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify()
-      })
-        .then((response) => {
-          if (response.status === 200) {
-            return response.json();
-          } else if (response.status === 401) {
-            alert("You're logged out, please log in");
-            this.props.navigation.navigate("Login");
-          } else if (response.status === 404) {
-            alert("User not found");
-          } else if (response.status === 500) {
-            alert("Server Error");
-          } else {
-            throw 'Something went wrong';
-          }
-        })
-        .then((responseJson) => {
-          console.log("Post created: ", responseJson, to_send);
-          this.props.navigation.navigate("UserPosts");
-        })
-        .catch((error) => {
-          console.log(error);
-        })
-    }
 
   render() {
 
@@ -143,38 +111,16 @@ class FriendList extends Component {
             <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Search</Text>
           </TouchableOpacity>
 
-
-
           <FlatList
             data={this.state.listData}
             renderItem={({ item }) => (
               <View>
-                <Text>{item.user_givenname} {item.user_familyname}</Text>
-
-                <Text>{item.post_text} {item.post_author} {item.post_profile}</Text>
-                <TouchableOpacity
-                  style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
-                  onPress={() => this.deleteUser(id)}
-                >
-                  <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>not needed - Delete Friend</Text>
-                </TouchableOpacity>
+                <Text>{item.user_givenname} {item.user_familyname} - [{item.user_id}]</Text>
+                
               </View>
-
-
-
-
-
             )}
             keyExtractor={(item, index) => item.user_id.toString()}
-
-
           />
-
-
-
-
-
-
 
         </View>
       );
@@ -189,7 +135,8 @@ const stylesFriendList = StyleSheet.create({
   titleText: {
     fontSize: 20,
     fontWeight: "bold"
-  }
+  },
+  button: { backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }
 });
 
 export default FriendList;

@@ -14,6 +14,7 @@ import FriendRequests from './Components/friendRequests.js';
 import UserPosts from './Components/userPosts.js';
 import NewPost from './Components/newPostScreen.js';
 import UserScreen from './Components/userScreen.js';
+import ViewPost from './Components/viewPostScreen.js';
 
 const Stack = createStackNavigator();
 var isSignedIn;
@@ -41,6 +42,7 @@ class CW extends Component{
                   <Stack.Screen name="UserPosts" component={UserPosts}/>
                   <Stack.Screen name="NewPost" component={NewPost}/>
                   <Stack.Screen name="UserScreen" component={UserScreen}/>
+                  <Stack.Screen name="ViewPost" component={ViewPost}/>
               </Stack.Navigator>
           </NavigationContainer>
     );
