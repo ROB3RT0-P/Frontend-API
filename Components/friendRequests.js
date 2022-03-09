@@ -75,10 +75,10 @@ class FriendRequests extends Component {
 
   acceptRequest = async (id) => {
     const value = await AsyncStorage.getItem('@session_token');
-    return fetch("http://10.0.2.2:333/friendrequests/" + id,
-      {
+    return fetch("http://localhost:3333/api/1.0.0/friendrequests/" + id, {
         method: 'post',
         headers: {
+          'X-Authorization': value,
           'content-Type': 'application/json'
         },
         body: JSON.stringify()
@@ -108,17 +108,17 @@ class FriendRequests extends Component {
 
   deleteRequest = async (id) => {
     const value = await AsyncStorage.getItem('@session_token');
-    return fetch("http://10.0.2.2:333/friendrequests/" + id,
+    return fetch("http://localhost:3333/api/1.0.0/friendrequests/" + id,
       {
         method: 'delete',
         headers: {
+          'X-Authorization': value,
           'content-Type': 'application/json'
         },
-        body: JSON.stringify()
       })
       .then((response) => {
         if (response.status === 200) {
-          alert("User added");
+          alert("Request deleted");
           return response.json()
         } else if (response.status === 401) {
           alert("You're logged out, please log in");
@@ -127,21 +127,21 @@ class FriendRequests extends Component {
           alert("User is already added as a friend");
         } else if (response.status === 404) {
           alert("Not found");
-        } else if (response.status === 404) {
+        } else if (response.status === 500) {
           alert("Server Error");
         } else {
           throw 'Something went wrong';
         }
-
+      })
+      .then(() => {
+       this.getData()
       })
       .catch((error) => {
         console.log(error);
       })
-  
   }
 
   render() {
-
     const navigation = this.props.navigation;
     if (this.state.isLoading) {
       return (
@@ -152,7 +152,7 @@ class FriendRequests extends Component {
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-          <Text>Loading..</Text>
+          <Text>Loading...</Text>
         </View>
       );
     } else {
@@ -164,27 +164,11 @@ class FriendRequests extends Component {
             <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Home</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
-            onPress={() => this.props.navigation.navigate('FriendRequests')}>
-            <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Friend Requests</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
-            onPress={() => this.props.navigation.navigate('Search')}>
-            <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Search</Text>
-          </TouchableOpacity>
-
-
-
           <FlatList
             data={this.state.listData}
             renderItem={({ item }) => (
               <View>
-                <Text>{item.user_givenname} {item.user_familyname}</Text>
-
-                
+                <Text>{item.user_givenname} {item.user_familyname} - [{item.user_id}] </Text>
                 <TouchableOpacity
                   style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
                   onPress={() => this.acceptRequest(item.user_id)}
@@ -198,23 +182,9 @@ class FriendRequests extends Component {
                   <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Delete Request</Text>
                 </TouchableOpacity>
               </View>
-
-
-
-
-
             )}
             keyExtractor={(item, index) => item.user_id.toString()}
-
-
           />
-
-
-
-
-
-
-
         </View>
       );
     }

@@ -6,15 +6,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-class UserPosts extends Component {
+class ViewPost extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       isLoading: true,
       listData: [],
-
-
     }
 
   }
@@ -165,15 +163,10 @@ class UserPosts extends Component {
         <View>
           <TouchableOpacity
             style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
-            onPress={() => this.props.navigation.navigate('Home')}>
-            <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Home</Text>
+            onPress={() => this.props.navigation.goBack()}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Go Backß</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
-            onPress={() => this.props.navigation.navigate('NewPost')}>
-            <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Create New Post</Text>
-          </TouchableOpacity>
           <FlatList
             data={this.state.listData}
             renderItem={({ item }) => (
@@ -181,30 +174,6 @@ class UserPosts extends Component {
                 <Text>{item.author.first_name} {item.author.last_name}</Text>
                 <Text>{item.text}</Text>
 
-
-                <TouchableOpacity
-                  style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
-                  onPress={() => this.props.navigation.navigate('ViewPost')}>
-                  <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Open Post</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
-                  onPress={() => this.deletePost(item.post_id)}>
-                  <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Delete Post</Text>
-                </TouchableOpacity>
-
-
-                <TouchableOpacity
-                  style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
-                  onPress={() => this.deletePost(item.post_id)}>
-                  <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Delete Post</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
-                  onPress={() => this.deletePost(item.post_id)}>
-                  <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Delete Post</Text>
-                </TouchableOpacity>
 
               </View>
             )}
@@ -217,7 +186,7 @@ class UserPosts extends Component {
 }
 
 
-export default UserPosts;
+export default ViewPost;
 
 const styles = StyleSheet.create({
   container: {

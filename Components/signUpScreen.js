@@ -42,7 +42,7 @@ class SU extends Component {
     return null;
   };
 
-  PassValidation = (pass, pass2) => {
+  PassValidation = (pass) => {
     pass = this.state.pass;
     //pass2 = this.state.confirmPass;
 
@@ -51,20 +51,18 @@ class SU extends Component {
       return 'Password must be more than 5 letters';
     }
 
-    //  if (pass !== pass2) {
-    //    alert('Passwords do not match');
-    //    return 'Passwords do not match';
-    //  }
-
     passGood = true;
     return null;
+
   };
 
 
   signUp = () => {
 
-    //this.EmailValidation(this.state.email);
-    //this.PassValidation(this.state.pass, this.state.confirmPass);
+    this.EmailValidation(this.state.email);
+    //this.PassValidation(this.state.pass);
+    passGood = true;
+
     if (passGood && emailGood === true) {
 
       return fetch("http://localhost:3333/api/1.0.0/user", {
