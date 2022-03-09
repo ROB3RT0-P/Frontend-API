@@ -10,21 +10,18 @@ class SearchScreen extends Component {
       isLoading: true,
       listData: []
     };
-
   }
 
   componentDidMount() {
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
       this.checkLoggedIn();
     });
-
     this.getData();
   }
 
   componentWillUnmount() {
     this.unsubscribe();
   }
-
 
   checkLoggedIn = async () => {
     const value = await AsyncStorage.getItem('@session_token');
@@ -59,10 +56,6 @@ class SearchScreen extends Component {
         console.log(error);
       })
   }
-
-
-
-
 
   addFriend = async (id) => {
   //const id = await AsyncStorage.getItem('@user_id');
@@ -101,6 +94,19 @@ class SearchScreen extends Component {
   }
 
   render() {
+    if (this.state.isLoading) {
+      return (
+        <View
+          style={{
+            flex: 1,
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Text>Loading...</Text>
+        </View>
+      );
+    } else {
     return (
       <View>
 
@@ -125,18 +131,12 @@ class SearchScreen extends Component {
             </View>
           )}
           keyExtractor={(item, index) => item.user_id.toString()}
-
-
-
         />
-
       </View>
     );
   }
 }
-
-
-export default SearchScreen;
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -161,3 +161,5 @@ const styles = StyleSheet.create({
     color: 'white',
   },
 });
+
+export default SearchScreen;

@@ -14,20 +14,14 @@ class ViewPost extends Component {
       isLoading: true,
       listData: [],
     }
-
   }
 
   componentDidMount() {
-
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
       this.checkLoggedIn();
     });
-
     this.getData();
-
   }
-
-
 
   componentWillUnmount() {
     this.unsubscribe();
@@ -44,17 +38,13 @@ class ViewPost extends Component {
       .then((response) => {
         if (response.status === 200) {
           return response.json()
-
         } else if (response.status === 401) {
           this.props.navigation.navigate("Login");
-
         } else if (response.status === 403) {
           alert('can only view the friends of yourself or friends.');;
-
         } else if (response.status === 404) {
           alert('No posts found, start by adding one.');
         } else {
-
           alert('Something went wrong');
           throw 'Something went wrong';
         }
@@ -76,9 +66,6 @@ class ViewPost extends Component {
       this.props.navigation.navigate('Login');
     }
   };
-
-
-
 
   deletePost = async (id) => {
     const value = await AsyncStorage.getItem('@session_token');
@@ -115,7 +102,6 @@ class ViewPost extends Component {
       })
   }
 
-
   updatePost() {
     let to_send = {
       id: parseInt(this.state.id),
@@ -141,11 +127,7 @@ class ViewPost extends Component {
       })
   }
 
-
-
-
   render() {
-
     if (this.state.isLoading) {
       return (
         <View
@@ -155,7 +137,7 @@ class ViewPost extends Component {
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-          <Text>Loading..</Text>
+          <Text>Loading...</Text>
         </View>
       );
     } else {
@@ -164,7 +146,7 @@ class ViewPost extends Component {
           <TouchableOpacity
             style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
             onPress={() => this.props.navigation.goBack()}>
-            <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Go Backß</Text>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Go Back</Text>
           </TouchableOpacity>
 
           <FlatList
@@ -173,8 +155,6 @@ class ViewPost extends Component {
               <View>
                 <Text>{item.author.first_name} {item.author.last_name}</Text>
                 <Text>{item.text}</Text>
-
-
               </View>
             )}
             keyExtractor={(item, index) => item.post_id.toString()}
@@ -184,9 +164,6 @@ class ViewPost extends Component {
     }
   }
 }
-
-
-export default ViewPost;
 
 const styles = StyleSheet.create({
   container: {
@@ -211,3 +188,5 @@ const styles = StyleSheet.create({
     color: 'white',
   },
 });
+
+export default ViewPost;

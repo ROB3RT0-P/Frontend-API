@@ -14,9 +14,6 @@ class Log extends Component {
     }
   }
 
-
-
-
   login = async () => {
 
     return fetch("http://localhost:3333/api/1.0.0/login", {
@@ -32,11 +29,9 @@ class Log extends Component {
         } else if (response.status === 400) {
           alert("Incorrect email or password");
           throw 'Invalid email or password';
-
         } else {
           alert("Something went wrong");
           throw 'Something went wrong';
-
         }
       })
       .then(async (responseJson) => {
@@ -52,15 +47,9 @@ class Log extends Component {
       })
   }
 
-
-  
-
   render() {
-
     const navigation = this.props.navigation;
-
     return (
-
       <ScrollView>
         <TextInput
           placeholder="Enter your email..."
@@ -93,8 +82,6 @@ class Log extends Component {
           </TouchableOpacity>
         </View>
       </ScrollView>
-
-
     )
   }
 }
@@ -106,34 +93,28 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 25
   },
-
   formItem: {
     padding: 20,
   },
-
   formLabel: {
     fontSize: 15,
     color: 'steelblue'
   },
-
   formInput: {
     borderWidth: 1,
     borderColor: 'lightblue',
     borderRadius: 5
   },
-
   formTouch: {
     backgroundColor: 'lightblue',
     padding: 10,
     alignItems: 'center'
   },
-
   formTouchText: {
     fontSize: 20,
     fontWeight: 'bold',
     color: 'steelblue'
   }
-
 });
 
 export default Log;

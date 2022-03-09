@@ -21,7 +21,6 @@ class HomeScreen extends Component {
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
       this.checkLoggedIn();
     });
-
     this.getData();
   }
 
@@ -94,16 +93,80 @@ class HomeScreen extends Component {
       })
   }
 
+  likePost = async (id) => {
+    const id2 = await AsyncStorage.getItem('@user_id');
+    const value = await AsyncStorage.getItem('@session_token');
+    return fetch("http://localhost:3333/api/1.0.0/user/" + id2 + "/post/" +id +"/like", {
+      method: 'post',
+      headers: {
+        'X-Authorization': value,
+        'Content-Type': 'application/json'
+      },
+    })
+      .then((response) => {
+        if (response.status === 200) {
+          alert('Post Liked');
+          return response.json();
+        } else if (response.status === 401) {
+          alert("You're logged out, please log in");
+          this.props.navigation.navigate("Login");
+        } else if (response.status === 403) {
+          alert("You have already liked this post");
+        } else if (response.status === 404) {
+          alert("Post not found");
+        } else if (response.status === 500) {
+          alert("Server Error");
+        } else {
+          throw 'Something went wrong';
+        }
+      })
+      .then((responseJson) => {
+        console.log(responseJson);
+        this.getData();
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }
 
-  likePost(id) {
-    return null;
-  };
-
+  unlikePost = async (id) => {
+    const id2 = await AsyncStorage.getItem('@user_id');
+    const value = await AsyncStorage.getItem('@session_token');
+    return fetch("http://localhost:3333/api/1.0.0/user/" + id2 + "/post/" + id + "/like", {
+      method: 'delete',
+      headers: {
+        'X-Authorization': value,
+        'Content-Type': 'application/json'
+      },
+    })
+      .then((response) => {
+        if (response.status === 200) {
+          alert('Post Liked');
+          return response.json();
+        } else if (response.status === 401) {
+          alert("You're logged out, please log in");
+          this.props.navigation.navigate("Login");
+        } else if (response.status === 403) {
+          alert("You have not liked this post");
+        } else if (response.status === 404) {
+          alert("Post not found");
+        } else if (response.status === 500) {
+          alert("Server Error");
+        } else {
+          throw 'Something went wrong';
+        }
+      })
+      .then((responseJson) => {
+        console.log("Post created: ", responseJson, to_send);
+        this.getData();
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }
 
   render() {
-
     const navigation = this.props.navigation;
-
     if (this.state.isLoading) {
       return (
         <View
@@ -118,53 +181,60 @@ class HomeScreen extends Component {
       );
     } else {
       return (
-        <View>
-          <TouchableOpacity
-            style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
-            onPress={() => this.props.navigation.navigate('UserScreen')}>
-            <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>My Details</Text>
-          </TouchableOpacity>
+        
+          <View>
+            <TouchableOpacity
+              style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
+              onPress={() => this.props.navigation.navigate('UserScreen')}>
+              <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>My Details</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
-            onPress={() => this.props.navigation.navigate('UserPosts')}>
-            <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>My Posts</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
+              onPress={() => this.props.navigation.navigate('UserPosts')}>
+              <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>My Posts</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
-            onPress={() => this.props.navigation.navigate('FriendList')}>
-            <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>My Friends</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
+              onPress={() => this.props.navigation.navigate('FriendList')}>
+              <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>My Friends</Text>
+            </TouchableOpacity>
 
+            <TouchableOpacity
+              style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
+              onPress={() => this.logout()}>
+              <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Log Out</Text>
+            </TouchableOpacity>
 
+            <FlatList
+              data={this.state.listData}
+              renderItem={({ item }) => (
+                <View>
+                  <Text style = {{fontSize: 20, fontWeight: "bold"}} >{item.user_givenname} {item.user_familyname}</Text>
 
+                  <Text>{item.post_text} {item.post_author} {item.post_profile}</Text>
+                  
+                    <TouchableOpacity
+                      style={{ backgroundColor: 'lightsteelblue', padding: 10, alignItems: 'center' }}
+                      onPress={() => this.likePost(item.post_id)}>
+                      <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Like Post</Text>
+                    </TouchableOpacity>
 
+                    <TouchableOpacity
+                      style={{ backgroundColor: 'lightsteelblue', padding: 10, alignItems: 'center' }}
+                      onPress={() => this.unlikePost(item.post_id)}>
+                      <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Unlike Post</Text>
+                    </TouchableOpacity>
 
-          <FlatList
-            data={this.state.listData}
-            renderItem={({ item }) => (
-              <View>
-                <Text>{item.user_givenname} {item.user_familyname}</Text>
-
-                <Text>{item.post_text} {item.post_author} {item.post_profile}</Text>
-                <Button title="Like"
-                  onPress={() => this.LikePost(item.id)} />
-              </View>
-
-            )}
-            keyExtractor={(item, index) => item.user_id.toString()}
-
-          />
-          <TouchableOpacity
-            style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
-            onPress={() => this.logout()}>
-            <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Log Out</Text>
-          </TouchableOpacity>
-        </View>
+                </View>
+              )}
+              keyExtractor={(item, index) => item.user_id.toString()}
+            />
+          </View>
+        
       );
     }
-
   }
 }
 

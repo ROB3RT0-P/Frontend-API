@@ -5,9 +5,6 @@ var passGood = false;
 var emailGood = false;
 
 class SU extends Component {
-
-
-
   constructor(props) {
     super(props);
 
@@ -53,18 +50,14 @@ class SU extends Component {
 
     passGood = true;
     return null;
-
   };
 
-
   signUp = () => {
-
     this.EmailValidation(this.state.email);
     //this.PassValidation(this.state.pass);
     passGood = true;
 
     if (passGood && emailGood === true) {
-
       return fetch("http://localhost:3333/api/1.0.0/user", {
         method: 'post',
         headers: {
@@ -95,9 +88,7 @@ class SU extends Component {
   }
 
   render() {
-
     const navigation = this.props.navigation;
-
     return (
       <ScrollView>
         <TextInput
@@ -136,7 +127,6 @@ class SU extends Component {
   }
 }
 
-
 const styles = StyleSheet.create({
   title: {
     color: 'steelblue',
@@ -144,34 +134,28 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 25
   },
-
   formItem: {
     padding: 20,
   },
-
   formLabel: {
     fontSize: 15,
     color: 'steelblue'
   },
-
   formInput: {
     borderWidth: 1,
     borderColor: 'lightblue',
     borderRadius: 5
   },
-
   formTouch: {
     backgroundColor: 'lightblue',
     padding: 10,
     alignItems: 'center'
   },
-
   formTouchText: {
     fontSize: 20,
     fontWeight: 'bold',
     color: 'steelblue'
   }
-
 });
 
 export default SU;

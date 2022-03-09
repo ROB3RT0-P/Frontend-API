@@ -15,14 +15,12 @@ class NewPost extends Component {
       isLoading: true,
       listData: [],
     };
-
   }
 
   componentDidMount() {
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
       this.checkLoggedIn();
     });
-
     this.getData();
     this.getUserId();
   }
@@ -43,8 +41,6 @@ getUserId = async() => {
       this.props.navigation.navigate('Login');
     }
   };
-
-
 
   getData = async () => {
     const value = await AsyncStorage.getItem('@session_token');
@@ -88,7 +84,6 @@ getUserId = async() => {
     }
   };
 
-
   addPost = async () => {
     let to_send = {
       text: this.state.text,
@@ -125,7 +120,6 @@ getUserId = async() => {
       })
   }
 
-  
   saveDraft = async () => {
     let to_send = {
       text: this.state.text,
@@ -136,11 +130,8 @@ getUserId = async() => {
         console.log(user_draft)
   }
 
-
   render() {
-
     const navigation = this.props.navigation;
-
     if (this.state.isLoading) {
       return (
         <View
@@ -165,6 +156,7 @@ getUserId = async() => {
             </TouchableOpacity>
 
             <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', color: 'steelblue' }}>New Post</Text>
+
             <TextInput
               placeholder="Write your post here..."
               onChangeText={(text) => this.setState({text})}
@@ -185,10 +177,7 @@ getUserId = async() => {
               <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Post</Text>
             </TouchableOpacity>
 
-
           </ScrollView>
-
-
         </View>
       );
     }

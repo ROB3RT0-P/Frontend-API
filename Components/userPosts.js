@@ -13,23 +13,15 @@ class UserPosts extends Component {
     this.state = {
       isLoading: true,
       listData: [],
-
-
     }
-
   }
 
   componentDidMount() {
-
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
       this.checkLoggedIn();
     });
-
     this.getData();
-
   }
-
-
 
   componentWillUnmount() {
     this.unsubscribe();
@@ -46,17 +38,13 @@ class UserPosts extends Component {
       .then((response) => {
         if (response.status === 200) {
           return response.json()
-
         } else if (response.status === 401) {
           this.props.navigation.navigate("Login");
-
         } else if (response.status === 403) {
           alert('can only view the friends of yourself or friends.');;
-
         } else if (response.status === 404) {
           alert('No posts found, start by adding one.');
         } else {
-
           alert('Something went wrong');
           throw 'Something went wrong';
         }
@@ -78,9 +66,6 @@ class UserPosts extends Component {
       this.props.navigation.navigate('Login');
     }
   };
-
-
-
 
   deletePost = async (id) => {
     const value = await AsyncStorage.getItem('@session_token');
@@ -117,7 +102,6 @@ class UserPosts extends Component {
       })
   }
 
-
   updatePost() {
     let to_send = {
       id: parseInt(this.state.id),
@@ -143,11 +127,80 @@ class UserPosts extends Component {
       })
   }
 
+likePost = async (id) => {
+    const id2 = await AsyncStorage.getItem('@user_id');
+    const value = await AsyncStorage.getItem('@session_token');
+    return fetch("http://localhost:3333/api/1.0.0/user/" + id2 + "/post/" +id +"/like", {
+      method: 'post',
+      headers: {
+        'X-Authorization': value,
+        'Content-Type': 'application/json'
+      },
+    })
+      .then((response) => {
+        if (response.status === 200) {
+          alert('Post Liked');
+          return response.json();
+        } else if (response.status === 401) {
+          alert("You're logged out, please log in");
+          this.props.navigation.navigate("Login");
+        } else if (response.status === 403) {
+          alert("You have already liked this post");
+        } else if (response.status === 404) {
+          alert("Post not found");
+        } else if (response.status === 500) {
+          alert("Server Error");
+        } else {
+          throw 'Something went wrong';
+        }
+      })
+      .then((responseJson) => {
+        console.log(responseJson);
+        this.getData();
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }
 
+  unlikePost = async (id) => {
+    const id2 = await AsyncStorage.getItem('@user_id');
+    const value = await AsyncStorage.getItem('@session_token');
+    return fetch("http://localhost:3333/api/1.0.0/user/" + id2 + "/post/" + id + "/like", {
+      method: 'delete',
+      headers: {
+        'X-Authorization': value,
+        'Content-Type': 'application/json'
+      },
+    })
+      .then((response) => {
+        if (response.status === 200) {
+          alert('Post Liked');
+          return response.json();
+        } else if (response.status === 401) {
+          alert("You're logged out, please log in");
+          this.props.navigation.navigate("Login");
+        } else if (response.status === 403) {
+          alert("You have not liked this post");
+        } else if (response.status === 404) {
+          alert("Post not found");
+        } else if (response.status === 500) {
+          alert("Server Error");
+        } else {
+          throw 'Something went wrong';
+        }
+      })
+      .then((responseJson) => {
+        console.log("Post created: ", responseJson, to_send);
+        this.getData();
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }
 
 
   render() {
-
     if (this.state.isLoading) {
       return (
         <View
@@ -157,7 +210,7 @@ class UserPosts extends Component {
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-          <Text>Loading..</Text>
+          <Text>Loading...</Text>
         </View>
       );
     } else {
@@ -174,13 +227,13 @@ class UserPosts extends Component {
             onPress={() => this.props.navigation.navigate('NewPost')}>
             <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Create New Post</Text>
           </TouchableOpacity>
+
           <FlatList
             data={this.state.listData}
             renderItem={({ item }) => (
               <View>
                 <Text>{item.author.first_name} {item.author.last_name}</Text>
                 <Text>{item.text}</Text>
-
 
                 <TouchableOpacity
                   style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
@@ -194,16 +247,16 @@ class UserPosts extends Component {
                   <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Delete Post</Text>
                 </TouchableOpacity>
 
+                <TouchableOpacity
+                  style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
+                  onPress={() => this.likePost(item.post_id)}>
+                  <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Like Post</Text>
+                </TouchableOpacity>
 
                 <TouchableOpacity
                   style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
-                  onPress={() => this.deletePost(item.post_id)}>
-                  <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Delete Post</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
-                  onPress={() => this.deletePost(item.post_id)}>
-                  <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Delete Post</Text>
+                  onPress={() => this.unlikePost(item.post_id)}>
+                  <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Unlike Post</Text>
                 </TouchableOpacity>
 
               </View>
@@ -215,9 +268,6 @@ class UserPosts extends Component {
     }
   }
 }
-
-
-export default UserPosts;
 
 const styles = StyleSheet.create({
   container: {
@@ -242,3 +292,5 @@ const styles = StyleSheet.create({
     color: 'white',
   },
 });
+
+export default UserPosts;

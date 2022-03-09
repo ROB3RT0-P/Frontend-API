@@ -21,7 +21,6 @@ class FriendList extends Component {
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
       this.checkLoggedIn();
     });
-
     this.getData();
   }
 
@@ -40,13 +39,10 @@ class FriendList extends Component {
       .then((response) => {
         if (response.status === 200) {
           return response.json()
-
         } else if (response.status === 401) {
           this.props.navigation.navigate("Login");
-
         } else if (response.status === 403) {
           alert('can only view the friends of yourself or friends.');;
-
         }else if (response.status === 404) {
           alert('No friends found, add some by sending a friend request.');
         } else {
@@ -76,7 +72,6 @@ class FriendList extends Component {
   };
 
   render() {
-
     const navigation = this.props.navigation;
     if (this.state.isLoading) {
       return (
@@ -87,7 +82,7 @@ class FriendList extends Component {
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-          <Text>Loading..</Text>
+          <Text>Loading...</Text>
         </View>
       );
     } else {
@@ -116,12 +111,10 @@ class FriendList extends Component {
             renderItem={({ item }) => (
               <View>
                 <Text>{item.user_givenname} {item.user_familyname} - [{item.user_id}]</Text>
-                
               </View>
             )}
             keyExtractor={(item, index) => item.user_id.toString()}
           />
-
         </View>
       );
     }
