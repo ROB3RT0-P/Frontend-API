@@ -347,7 +347,12 @@ class HomeScreen extends Component {
 
 
     
-
+    getUserId = async() => {
+      let global_id = await AsyncStorage.getItem('@user_id');
+      id = global_id;
+      console.log("trasferring global id '" + global_id + "' to local variable. Локальная переменная теперь: '" + id + "'")
+  }
+  
 
 
 export default HomeScreen;

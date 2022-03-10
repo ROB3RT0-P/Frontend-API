@@ -89,28 +89,28 @@ class FriendList extends Component {
       return (
         <View>
           <TouchableOpacity
-            style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
+            style={stylesFriendList.button}
             onPress={() => this.props.navigation.navigate('Home')}>
-            <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Home</Text>
+            <Text style={stylesFriendList.buttonText}>Home</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
+            style={stylesFriendList.button}
             onPress={() => this.props.navigation.navigate('FriendRequests')}>
-            <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Friend Requests</Text>
+            <Text style={stylesFriendList.buttonText}>Friend Requests</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
+            style={stylesFriendList.button}
             onPress={() => this.props.navigation.navigate('Search')}>
-            <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Search</Text>
+            <Text style={stylesFriendList.buttonText}>Search</Text>
           </TouchableOpacity>
 
           <FlatList
             data={this.state.listData}
             renderItem={({ item }) => (
               <View>
-                <Text>{item.user_givenname} {item.user_familyname} - [{item.user_id}]</Text>
+                <Text style={stylesFriendList.text}>{item.user_givenname} {item.user_familyname} - [{item.user_id}]</Text>
               </View>
             )}
             keyExtractor={(item, index) => item.user_id.toString()}
@@ -129,7 +129,32 @@ const stylesFriendList = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold"
   },
-  button: { backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }
+  text: { 
+    fontSize: 20, 
+    fontWeight: 'bold', 
+    textAlign: 'center', 
+    color: 'steelblue' },
+  textInput: { 
+    padding: 5, 
+    borderWidth: 1, 
+    margin: 5 
+  },
+  button: { 
+    backgroundColor: 'lightblue', 
+    padding: 10, 
+    alignItems: 'center' 
+  },
+  buttonText: {
+    fontSize: 20, 
+    fontWeight: 'bold', 
+    color: 'steelblue'
+  },
+  loading: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
 });
 
 export default FriendList;

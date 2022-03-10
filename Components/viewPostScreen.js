@@ -12,7 +12,7 @@ class ViewPost extends Component {
 
     this.state = {
       isLoading: true,
-      listData: [],
+      listData: []
     }
   }
 
@@ -30,7 +30,8 @@ class ViewPost extends Component {
   getData = async () => {
     const value = await AsyncStorage.getItem('@session_token');
     const id = await AsyncStorage.getItem('@user_id');
-    return fetch("http://localhost:3333/api/1.0.0/user/" + id + "/post", {
+    const post_id = await AsyncStorage.getItem('@post_id');
+    return fetch("http://localhost:3333/api/1.0.0/user/" + id + "/post/" + post_id, {
       'headers': {
         'X-Authorization': value,
       }
@@ -111,7 +112,7 @@ class ViewPost extends Component {
       email: this.state.email,
     };
 
-    return fetch("http://10.0.2.2:333/user/" + id + "/post" + id,
+    return fetch("http://10.0.2.2:333/user/" + id + "/post/" + id,
       {
         method: 'patch',
         headers: {
@@ -131,12 +132,7 @@ class ViewPost extends Component {
     if (this.state.isLoading) {
       return (
         <View
-          style={{
-            flex: 1,
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
+          style={stylesViewPost.loading}>
           <Text>Loading...</Text>
         </View>
       );
@@ -144,17 +140,17 @@ class ViewPost extends Component {
       return (
         <View>
           <TouchableOpacity
-            style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
+            style={stylesViewPost.button}
             onPress={() => this.props.navigation.goBack()}>
-            <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Go Back</Text>
+            <Text style={stylesViewPost.buttonText}>Go Back</Text>
           </TouchableOpacity>
 
           <FlatList
             data={this.state.listData}
-            renderItem={({ item }) => (
+            renderItem={({item}) => (
               <View>
-                <Text>{item.author.first_name} {item.author.last_name}</Text>
-                <Text>{item.text}</Text>
+                <Text style={stylesViewPost.text}>{item.author.first_name} {item.author.last_name}</Text>
+                <Text style={stylesViewPost}>{item.text}</Text>
               </View>
             )}
             keyExtractor={(item, index) => item.post_id.toString()}
@@ -165,7 +161,7 @@ class ViewPost extends Component {
   }
 }
 
-const styles = StyleSheet.create({
+const stylesViewPost = StyleSheet.create({
   container: {
     flex: 1,
   },
@@ -183,10 +179,38 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     alignItems: 'center',
   },
-  text: {
-    fontSize: 18,
-    color: 'white',
+  text: { 
+    fontSize: 20, 
+    fontWeight: 'bold', 
+    textAlign: 'center', 
+    color: 'steelblue' },
+  textInput: { 
+    padding: 5, 
+    borderWidth: 1, 
+    margin: 5 
   },
+  button: { 
+    backgroundColor: 'lightblue', 
+    padding: 10, 
+    alignItems: 'center' 
+  },
+  buttonText: {
+    fontSize: 20, 
+    fontWeight: 'bold', 
+    color: 'steelblue'
+  },
+  loading: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  postText: {
+    fontSize: 20, 
+    fontWeight: 'bold', 
+    textAlign: 'left', 
+    color: 'steelblue' 
+  }
 });
 
 export default ViewPost;

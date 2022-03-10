@@ -4,16 +4,16 @@ import stacknavigator from 'react-navigation'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-
 import { View, ScrollView, Text, TextInput, StyleSheet, TouchableOpacity, styles, flex, Button, FlatList, Alert } from 'react-native';
 
-class NewPost extends Component {
+class Draft extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       isLoading: true,
       listData: [],
+      draft: '',
     };
   }
 
@@ -22,14 +22,7 @@ class NewPost extends Component {
       this.checkLoggedIn();
     });
     this.getData();
-    this.getUserId();
   }
-
-getUserId = async() => {
-    let global_id = await AsyncStorage.getItem('@user_id');
-    id = global_id;
-    console.log("trasferring global id '" + global_id + "' to local variable. Локальная переменная теперь: '" + id + "'")
-}
 
   componentWillUnmount() {
     this.unsubscribe();
@@ -43,6 +36,9 @@ getUserId = async() => {
   };
 
   getData = async () => {
+    const user_draft = await AsyncStorage.getItem('@user_draft');
+    const id = await AsyncStorage.getItem('@user_id');
+    this.state.draft = user_draft;
     const value = await AsyncStorage.getItem('@session_token');
     return fetch("http://localhost:3333/api/1.0.0/search/", {
       'headers': {
@@ -130,12 +126,21 @@ getUserId = async() => {
         console.log(user_draft)
   }
 
+  timerPost = async () => {
+  
+}
+
   render() {
     const navigation = this.props.navigation;
     if (this.state.isLoading) {
       return (
         <View
-          style={stylesNewPost.loading}>
+          style={{
+            flex: 1,
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
           <Text>Loading...</Text>
         </View>
       );
@@ -153,7 +158,7 @@ getUserId = async() => {
             <Text style={stylesNewPost.text}>New Post</Text>
 
             <TextInput
-              placeholder="Write your post here..."
+              placeholder= {this.state.draft}
               onChangeText={(text) => this.setState({text})}
               value={this.state.text}
               multiline={true}
@@ -176,6 +181,20 @@ getUserId = async() => {
               style={stylesNewPost.button}
               onPress={() => this.props.navigation.navigate('Draft')}>
               <Text style={stylesNewPost.buttonText}>Edit/Post Draft</Text>
+            </TouchableOpacity>
+
+            <TextInput
+              placeholder="Minutes until post..."
+              onChangeText={(countDown) => this.setState({countDown})}
+              value={this.state.countDown}
+              multiline={false}
+              style={stylesNewPost.textInput}
+            />
+
+            <TouchableOpacity
+              style={stylesNewPost.button}
+              onPress={() => this.navigation.navigate('Draft')}>
+              <Text style={stylesNewPost.buttonText}>Schedule Post Time</Text>
             </TouchableOpacity>
 
           </ScrollView>
@@ -221,4 +240,4 @@ const stylesNewPost = StyleSheet.create({
   }
 });
 
-export default NewPost;
+export default Draft;

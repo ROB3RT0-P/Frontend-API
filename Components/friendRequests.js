@@ -159,9 +159,9 @@ class FriendRequests extends Component {
       return (
         <View>
           <TouchableOpacity
-            style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
+            style={stylesFriendRequests.button}
             onPress={() => this.props.navigation.navigate('Home')}>
-            <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Home</Text>
+            <Text style={stylesFriendRequests.buttonText}>Home</Text>
           </TouchableOpacity>
 
           <FlatList
@@ -169,17 +169,18 @@ class FriendRequests extends Component {
             renderItem={({ item }) => (
               <View>
                 <Text>{item.user_givenname} {item.user_familyname} - [{item.user_id}] </Text>
+
                 <TouchableOpacity
-                  style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
+                  style={stylesFriendRequests.button}
                   onPress={() => this.acceptRequest(item.user_id)}
                 >
-                  <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Accept Request</Text>
+                  <Text style={stylesFriendRequests.text}>Accept Request</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
+                  style={stylesFriendRequests.button}
                   onPress={() => this.deleteRequest(item.user_id)}
                 >
-                  <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Delete Request</Text>
+                  <Text style={stylesFriendRequests.buttonText}>Delete Request</Text>
                 </TouchableOpacity>
               </View>
             )}
@@ -198,6 +199,32 @@ const stylesFriendRequests = StyleSheet.create({
   titleText: {
     fontSize: 20,
     fontWeight: "bold"
+  },
+  text: { 
+    fontSize: 20, 
+    fontWeight: 'bold', 
+    textAlign: 'center', 
+    color: 'steelblue' },
+  textInput: { 
+    padding: 5, 
+    borderWidth: 1, 
+    margin: 5 
+  },
+  button: { 
+    backgroundColor: 'lightblue', 
+    padding: 10, 
+    alignItems: 'center' 
+  },
+  buttonText: {
+    fontSize: 20, 
+    fontWeight: 'bold', 
+    color: 'steelblue'
+  },
+  loading: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
   }
 });
 

@@ -15,6 +15,8 @@ import UserPosts from './Components/userPosts.js';
 import NewPost from './Components/newPostScreen.js';
 import UserScreen from './Components/userScreen.js';
 import ViewPost from './Components/viewPostScreen.js';
+import Draft from './Components/draftScreen.js';
+import EditPost from './Components/editPostScreen.js';
 
 const Stack = createStackNavigator();
 var isSignedIn;
@@ -31,7 +33,6 @@ class CW extends Component{
     return (
           <NavigationContainer>
               <Stack.Navigator>
-               
                   <Stack.Screen name="Home" component={HomeScreen}/>
                   <Stack.Screen name="SignUp" component={SU}/>
                   <Stack.Screen name="Login" component={Log}/> 
@@ -43,6 +44,8 @@ class CW extends Component{
                   <Stack.Screen name="NewPost" component={NewPost}/>
                   <Stack.Screen name="UserScreen" component={UserScreen}/>
                   <Stack.Screen name="ViewPost" component={ViewPost}/>
+                  <Stack.Screen name="Draft" component={Draft}/>
+                  <Stack.Screen name="EditPost" component={EditPost}/>
               </Stack.Navigator>
           </NavigationContainer>
     );

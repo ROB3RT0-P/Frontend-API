@@ -95,39 +95,39 @@ class SU extends Component {
           placeholder="Enter your first name..."
           onChangeText={(first_name) => this.setState({ first_name })}
           value={this.state.first_name}
-          style={{ padding: 5, borderWidth: 1, margin: 5 }}
+          style={stylesSignUp.textInput}
         />
         <TextInput
           placeholder="Enter your last name..."
           onChangeText={(last_name) => this.setState({ last_name })}
           value={this.state.last_name}
-          style={{ padding: 5, borderWidth: 1, margin: 5 }}
+          style={stylesSignUp.textInput}
         />
         <TextInput
           placeholder="Enter your email..."
           onChangeText={(email) => this.setState({ email })}
           value={this.state.email}
-          style={{ padding: 5, borderWidth: 1, margin: 5 }}
+          style={stylesSignUp.textInput}
         />
         <TextInput
           placeholder="Enter your password..."
           onChangeText={(password) => this.setState({ password })}
           value={this.state.password}
           secureTextEntry
-          style={{ padding: 5, borderWidth: 1, margin: 5 }}
+          style={stylesSignUp.textInput}
         />
         <TouchableOpacity
-          style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
+          style={stylesSignUp.button}
           onPress={() => this.signUp()}
         >
-          <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Create Account</Text>
+          <Text style={stylesSignUp.buttonText}>Create Account</Text>
         </TouchableOpacity>
       </ScrollView>
     );
   }
 }
 
-const styles = StyleSheet.create({
+const stylesSignUp = StyleSheet.create({
   title: {
     color: 'steelblue',
     backgroundColor: "lightblue",
@@ -155,6 +155,32 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: 'steelblue'
+  },
+  text: { 
+    fontSize: 20, 
+    fontWeight: 'bold', 
+    textAlign: 'center', 
+    color: 'steelblue' },
+  textInput: { 
+    padding: 5, 
+    borderWidth: 1, 
+    margin: 5 
+  },
+  button: { 
+    backgroundColor: 'lightblue', 
+    padding: 10, 
+    alignItems: 'center' 
+  },
+  buttonText: {
+    fontSize: 20, 
+    fontWeight: 'bold', 
+    color: 'steelblue'
+  },
+  loading: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
   }
 });
 

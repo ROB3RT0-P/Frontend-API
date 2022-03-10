@@ -105,4 +105,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'white',
   },
+  loading: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
 });

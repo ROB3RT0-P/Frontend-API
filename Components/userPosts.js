@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
+var global_text = '';
 class UserPosts extends Component {
   constructor(props) {
     super(props);
@@ -127,10 +128,10 @@ class UserPosts extends Component {
       })
   }
 
-likePost = async (id) => {
+  likePost = async (id) => {
     const id2 = await AsyncStorage.getItem('@user_id');
     const value = await AsyncStorage.getItem('@session_token');
-    return fetch("http://localhost:3333/api/1.0.0/user/" + id2 + "/post/" +id +"/like", {
+    return fetch("http://localhost:3333/api/1.0.0/user/" + id2 + "/post/" + id + "/like", {
       method: 'post',
       headers: {
         'X-Authorization': value,
@@ -199,17 +200,26 @@ likePost = async (id) => {
       })
   }
 
+  savePostId_Edit = async (id, text) => {
+    await AsyncStorage.setItem('@post_id', JSON.stringify(id));
+    await AsyncStorage.setItem('@post_text', JSON.stringify(text));
+    console.log(id);
+    console.log(text);
+    this.props.navigation.navigate('EditPost');
+  }
+
+  savePostId_View = async (id, text) => {
+    await AsyncStorage.setItem('@post_id', JSON.stringify(id));
+    console.log(id);
+    console.log(text);
+    this.props.navigation.navigate('ViewPost');
+  }
 
   render() {
     if (this.state.isLoading) {
       return (
         <View
-          style={{
-            flex: 1,
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
+          style={stylesUserPosts.loading}>
           <Text>Loading...</Text>
         </View>
       );
@@ -217,46 +227,40 @@ likePost = async (id) => {
       return (
         <View>
           <TouchableOpacity
-            style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
+            style={stylesUserPosts.button}
             onPress={() => this.props.navigation.navigate('Home')}>
-            <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Home</Text>
+            <Text style={stylesUserPosts.buttonText}>Home</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
+            style={stylesUserPosts.button}
             onPress={() => this.props.navigation.navigate('NewPost')}>
-            <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Create New Post</Text>
+            <Text style={stylesUserPosts.buttonText}>Create New Post</Text>
           </TouchableOpacity>
 
           <FlatList
             data={this.state.listData}
             renderItem={({ item }) => (
               <View>
-                <Text>{item.author.first_name} {item.author.last_name}</Text>
-                <Text>{item.text}</Text>
+                <Text style ={stylesUserPosts.postText}>{item.author.first_name} {item.author.last_name}</Text>
+                <Text style ={stylesUserPosts.text}>{item.text}</Text>
 
                 <TouchableOpacity
-                  style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
-                  onPress={() => this.props.navigation.navigate('ViewPost')}>
-                  <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Open Post</Text>
+                  style={stylesUserPosts.button}
+                  onPress={() => this.savePostId_View(item.post_id, item.text)}>
+                  <Text style={stylesUserPosts.buttonText}>Open Post</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
+                  style={stylesUserPosts.button}
+                  onPress={() => this.savePostId_Edit(item.post_id, item.text)}>
+                  <Text style={stylesUserPosts.buttonText}>Edit Post</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={stylesUserPosts.button}
                   onPress={() => this.deletePost(item.post_id)}>
-                  <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Delete Post</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
-                  onPress={() => this.likePost(item.post_id)}>
-                  <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Like Post</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
-                  onPress={() => this.unlikePost(item.post_id)}>
-                  <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Unlike Post</Text>
+                  <Text style={stylesUserPosts.buttonText}>Delete Post</Text>
                 </TouchableOpacity>
 
               </View>
@@ -269,7 +273,7 @@ likePost = async (id) => {
   }
 }
 
-const styles = StyleSheet.create({
+const stylesUserPosts = StyleSheet.create({
   container: {
     flex: 1,
   },
@@ -287,10 +291,38 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     alignItems: 'center',
   },
-  text: {
-    fontSize: 18,
-    color: 'white',
+  text: { 
+    fontSize: 20, 
+    fontWeight: 'bold', 
+    textAlign: 'center', 
+    color: 'steelblue' },
+  textInput: { 
+    padding: 5, 
+    borderWidth: 1, 
+    margin: 5 
   },
+  button: { 
+    backgroundColor: 'lightblue', 
+    padding: 10, 
+    alignItems: 'center' 
+  },
+  buttonText: {
+    fontSize: 20, 
+    fontWeight: 'bold', 
+    color: 'steelblue'
+  },
+  loading: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  postText: {
+    fontSize: 20, 
+    fontWeight: 'bold', 
+    textAlign: 'left', 
+    color: 'steelblue' 
+  }
 });
 
 export default UserPosts;

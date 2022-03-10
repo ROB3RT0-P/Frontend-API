@@ -97,12 +97,7 @@ class SearchScreen extends Component {
     if (this.state.isLoading) {
       return (
         <View
-          style={{
-            flex: 1,
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
+          style={stylesSearch.loading}>
           <Text>Loading...</Text>
         </View>
       );
@@ -111,21 +106,21 @@ class SearchScreen extends Component {
       <View>
 
         <TouchableOpacity
-          style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
+          style={stylesSearch.button}
           onPress={() => this.props.navigation.navigate('Home')}>
-          <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Home</Text>
+          <Text style={stylesSearch.buttonText}>Home</Text>
         </TouchableOpacity>
 
         <FlatList
           data={this.state.listData}
-          renderItem={({ item }) => (
+          renderItem={({item}) => (
             <View>
               <Text>{item.user_givenname} {item.user_familyname} - [{item.user_id}]</Text>
 
               <TouchableOpacity
-                style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
+                style={stylesSearch.button}
                 onPress={() => this.addFriend(item.user_id)}>
-                <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Add Friend</Text>
+                <Text style={stylesSearch.buttonText}>Add Friend</Text>
               </TouchableOpacity>
 
             </View>
@@ -138,7 +133,7 @@ class SearchScreen extends Component {
 }
 }
 
-const styles = StyleSheet.create({
+const stylesSearch = StyleSheet.create({
   container: {
     flex: 1,
   },
@@ -160,6 +155,32 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'white',
   },
+  text: { 
+    fontSize: 20, 
+    fontWeight: 'bold', 
+    textAlign: 'center', 
+    color: 'steelblue' },
+  textInput: { 
+    padding: 5, 
+    borderWidth: 1, 
+    margin: 5 
+  },
+  button: { 
+    backgroundColor: 'lightblue', 
+    padding: 10, 
+    alignItems: 'center' 
+  },
+  buttonText: {
+    fontSize: 20, 
+    fontWeight: 'bold', 
+    color: 'steelblue'
+  },
+  loading: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
 });
 
 export default SearchScreen;

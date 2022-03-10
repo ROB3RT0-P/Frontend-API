@@ -72,6 +72,7 @@ class HomeScreen extends Component {
   logout = async () => {
     let token = await AsyncStorage.getItem('@session_token');
     await AsyncStorage.removeItem('@session_token');
+    await AsyncStorage.removeItem('user_id');
     return fetch("http://localhost:3333/api/1.0.0/logout", {
       method: 'post',
       headers: {
@@ -170,12 +171,7 @@ class HomeScreen extends Component {
     if (this.state.isLoading) {
       return (
         <View
-          style={{
-            flex: 1,
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
+          style={stylesHomeScreen.loading}>
           <Text>Loading...</Text>
         </View>
       );
@@ -184,47 +180,47 @@ class HomeScreen extends Component {
         
           <View>
             <TouchableOpacity
-              style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
+              style={stylesHomeScreen.button}
               onPress={() => this.props.navigation.navigate('UserScreen')}>
-              <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>My Details</Text>
+              <Text style={stylesHomeScreen.buttonText}>My Details</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
+              style={stylesHomeScreen.button}
               onPress={() => this.props.navigation.navigate('UserPosts')}>
-              <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>My Posts</Text>
+              <Text style={stylesHomeScreen.buttonText}>My Posts</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
+              style={stylesHomeScreen.button}
               onPress={() => this.props.navigation.navigate('FriendList')}>
-              <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>My Friends</Text>
+              <Text style={stylesHomeScreen.buttonText}>My Friends</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
+              style={stylesHomeScreen.button}
               onPress={() => this.logout()}>
-              <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Log Out</Text>
+              <Text style={stylesHomeScreen.buttonText}>Log Out</Text>
             </TouchableOpacity>
 
             <FlatList
               data={this.state.listData}
-              renderItem={({ item }) => (
+              renderItem={({item}) => (
                 <View>
-                  <Text style = {{fontSize: 20, fontWeight: "bold"}} >{item.user_givenname} {item.user_familyname}</Text>
+                  <Text style = {stylesHomeScreen.text} >{item.user_givenname} {item.user_familyname}</Text>
 
                   <Text>{item.post_text} {item.post_author} {item.post_profile}</Text>
                   
                     <TouchableOpacity
-                      style={{ backgroundColor: 'lightsteelblue', padding: 10, alignItems: 'center' }}
+                      style={stylesHomeScreen.button}
                       onPress={() => this.likePost(item.post_id)}>
-                      <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Like Post</Text>
+                      <Text style={stylesHomeScreen.buttonText}>Like Post</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                      style={{ backgroundColor: 'lightsteelblue', padding: 10, alignItems: 'center' }}
+                      style={stylesHomeScreen.button}
                       onPress={() => this.unlikePost(item.post_id)}>
-                      <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Unlike Post</Text>
+                      <Text style={stylesHomeScreen.buttonText}>Unlike Post</Text>
                     </TouchableOpacity>
 
                 </View>
@@ -245,6 +241,32 @@ const stylesHomeScreen = StyleSheet.create({
   titleText: {
     fontSize: 20,
     fontWeight: "bold"
+  },
+  text: { 
+    fontSize: 20, 
+    fontWeight: 'bold', 
+    textAlign: 'center', 
+    color: 'steelblue' },
+  textInput: { 
+    padding: 5, 
+    borderWidth: 1, 
+    margin: 5 
+  },
+  button: { 
+    backgroundColor: 'lightblue', 
+    padding: 10, 
+    alignItems: 'center' 
+  },
+  buttonText: {
+    fontSize: 20, 
+    fontWeight: 'bold', 
+    color: 'steelblue'
+  },
+  loading: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
   }
 });
 

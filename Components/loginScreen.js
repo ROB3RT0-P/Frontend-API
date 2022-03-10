@@ -55,30 +55,30 @@ class Log extends Component {
           placeholder="Enter your email..."
           onChangeText={(email) => this.setState({ email })}
           value={this.state.email}
-          style={{ padding: 5, borderWidth: 1, margin: 5 }}
+          style={stylesLogin.textInput}
         />
         <TextInput
           placeholder="Enter your password..."
           onChangeText={(password) => this.setState({ password })}
           value={this.state.password}
           secureTextEntry
-          style={{ padding: 5, borderWidth: 1, margin: 5 }}
+          style={stylesLogin.textInput}
         />
         <View style={{ padding: 10 }}>
           <TouchableOpacity
-            style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
+            style={stylesLogin.button}
             onPress={() => this.login()}
           >
-            <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Login</Text>
+            <Text style={stylesLogin.buttonText}>Login</Text>
           </TouchableOpacity>
         </View>
 
         <View style={{ padding: 10 }}>
           <TouchableOpacity
-            style={{ backgroundColor: 'lightblue', padding: 10, alignItems: 'center' }}
+            style={stylesLogin.button}
             onPress={() => this.props.navigation.navigate("SignUp")}
           >
-            <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'steelblue' }}>Sign Up</Text>
+            <Text style={stylesLogin.buttonText}>Sign Up</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -86,7 +86,7 @@ class Log extends Component {
   }
 }
 
-const styles = StyleSheet.create({
+const stylesLogin = StyleSheet.create({
   title: {
     color: 'steelblue',
     backgroundColor: "lightblue",
@@ -114,6 +114,32 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: 'steelblue'
+  },
+  text: { 
+    fontSize: 20, 
+    fontWeight: 'bold', 
+    textAlign: 'center', 
+    color: 'steelblue' },
+  textInput: { 
+    padding: 5, 
+    borderWidth: 1, 
+    margin: 5 
+  },
+  button: { 
+    backgroundColor: 'lightblue', 
+    padding: 10, 
+    alignItems: 'center' 
+  },
+  buttonText: {
+    fontSize: 20, 
+    fontWeight: 'bold', 
+    color: 'steelblue'
+  },
+  loading: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
   }
 });
 
