@@ -150,6 +150,7 @@ class ViewPost extends Component {
             renderItem={({item}) => (
               <View>
                 <Text style={stylesViewPost.text}>{item.author.first_name} {item.author.last_name}</Text>
+                <Text style={stylesViewPost.text}>{item.author.first_name} {item.author.last_name}</Text>
                 <Text style={stylesViewPost}>{item.text}</Text>
               </View>
             )}

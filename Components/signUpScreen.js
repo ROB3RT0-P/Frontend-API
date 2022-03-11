@@ -40,10 +40,9 @@ class SU extends Component {
   };
 
   PassValidation = (pass) => {
-    pass = this.state.pass;
-    //pass2 = this.state.confirmPass;
-
-    if (!pass || pass.length <= 5) {
+    var password = this.state.password;
+      console.log(password)
+    if (!password || password.length < 5) {
       alert('Password must be more than 5 letters');
       return 'Password must be more than 5 letters';
     }
@@ -53,9 +52,8 @@ class SU extends Component {
   };
 
   signUp = () => {
-    this.EmailValidation(this.state.email);
-    //this.PassValidation(this.state.pass);
-    passGood = true;
+    this.EmailValidation();
+    this.PassValidation();
 
     if (passGood && emailGood === true) {
       return fetch("http://localhost:3333/api/1.0.0/user", {
