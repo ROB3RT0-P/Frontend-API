@@ -30,7 +30,7 @@ class HomeScreen extends Component {
 
   getData = async () => {
     const value = await AsyncStorage.getItem('@session_token');
-    return fetch("http://localhost:3333/api/1.0.0/search", {
+    return fetch("http://localhost:3333/api/1.0.0/user/"+ 17 + "/post", {
       'headers': {
         'X-Authorization': value
       }
@@ -51,17 +51,17 @@ class HomeScreen extends Component {
         })
       })
       .then(async (responseJson) => {
-        let global_id = await AsyncStorage.getItem('@user_id');
-        this.props.navigation.navigate("Home");
+       // let global_id = await AsyncStorage.getItem('@user_id');
+        //this.props.navigation.navigate("Home");
 
-        id = global_id;
-        console.log("trasferring global id '" + global_id + "' to local variable. Локальная переменная теперь: '" + id + "'")
+       // id = global_id;
+       // console.log("trasferring global id '" + global_id + "' to local variable. Local id : '" + id + "'")
       })
       .catch((error) => {
         console.log(error);
       })
   }
-
+  
   checkLoggedIn = async () => {
     const value = await AsyncStorage.getItem('@session_token');
     if (value == null) {
@@ -97,7 +97,7 @@ class HomeScreen extends Component {
   likePost = async (id) => {
     const id2 = await AsyncStorage.getItem('@user_id');
     const value = await AsyncStorage.getItem('@session_token');
-    return fetch("http://localhost:3333/api/1.0.0/user/" + id2 + "/post/" +id +"/like", {
+    return fetch("http://localhost:3333/api/1.0.0/user/" + 17 + "/post/" +id +"/like", {
       method: 'post',
       headers: {
         'X-Authorization': value,
@@ -133,7 +133,7 @@ class HomeScreen extends Component {
   unlikePost = async (id) => {
     const id2 = await AsyncStorage.getItem('@user_id');
     const value = await AsyncStorage.getItem('@session_token');
-    return fetch("http://localhost:3333/api/1.0.0/user/" + id2 + "/post/" + id + "/like", {
+    return fetch("http://localhost:3333/api/1.0.0/user/" + 17 + "/post/" + id + "/like", {
       method: 'delete',
       headers: {
         'X-Authorization': value,
@@ -142,7 +142,7 @@ class HomeScreen extends Component {
     })
       .then((response) => {
         if (response.status === 200) {
-          alert('Post Liked');
+          alert('Post unLiked');
           return response.json();
         } else if (response.status === 401) {
           alert("You're logged out, please log in");
@@ -207,9 +207,9 @@ class HomeScreen extends Component {
               data={this.state.listData}
               renderItem={({item}) => (
                 <View>
-                  <Text style = {stylesHomeScreen.text} >{item.user_givenname} {item.user_familyname}</Text>
-
-                  <Text>{item.post_text} {item.post_author} {item.post_profile}</Text>
+                  <Text style = {stylesHomeScreen.text} >{item.author.first_name} {item.author.last_name}</Text>
+                  <Text style = {stylesHomeScreen.titleText} >{item.text} </Text>
+                  <Text style = {stylesHomeScreen.titleText} >Likes: {item.numLikes} </Text>
                   
                     <TouchableOpacity
                       style={stylesHomeScreen.button}
@@ -225,7 +225,7 @@ class HomeScreen extends Component {
 
                 </View>
               )}
-              keyExtractor={(item, index) => item.user_id.toString()}
+              keyExtractor={(item, index) => item.post_id.toString()}
             />
           </View>
         

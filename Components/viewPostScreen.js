@@ -144,18 +144,10 @@ class ViewPost extends Component {
             onPress={() => this.props.navigation.goBack()}>
             <Text style={stylesViewPost.buttonText}>Go Back</Text>
           </TouchableOpacity>
+          <Text style={stylesViewPost.text}>{this.state.listData.author.first_name} {this.state.listData.author.last_name}</Text>
+          <Text style={stylesViewPost.postText}>{this.state.listData.text}</Text>
+          <Text style={stylesViewPost.postText}>Likes: {this.state.listData.numLikes}</Text>
 
-          <FlatList
-            data={this.state.listData}
-            renderItem={({item}) => (
-              <View>
-                <Text style={stylesViewPost.text}>{item.author.first_name} {item.author.last_name}</Text>
-                <Text style={stylesViewPost.text}>{item.author.first_name} {item.author.last_name}</Text>
-                <Text style={stylesViewPost}>{item.text}</Text>
-              </View>
-            )}
-            keyExtractor={(item, index) => item.post_id.toString()}
-          />
         </View>
       );
     }

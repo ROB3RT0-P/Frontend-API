@@ -46,7 +46,6 @@ class SU extends Component {
       alert('Password must be more than 5 letters');
       return 'Password must be more than 5 letters';
     }
-
     passGood = true;
     return null;
   };
@@ -89,24 +88,28 @@ class SU extends Component {
     const navigation = this.props.navigation;
     return (
       <ScrollView>
+        <Text style={stylesSignUp.titleText}>First Name:</Text>
         <TextInput
           placeholder="Enter your first name..."
           onChangeText={(first_name) => this.setState({ first_name })}
           value={this.state.first_name}
           style={stylesSignUp.textInput}
         />
+        <Text style={stylesSignUp.titleText}>Last Name:</Text>
         <TextInput
           placeholder="Enter your last name..."
           onChangeText={(last_name) => this.setState({ last_name })}
           value={this.state.last_name}
           style={stylesSignUp.textInput}
         />
+        <Text style={stylesSignUp.titleText}>Email:</Text>
         <TextInput
           placeholder="Enter your email..."
           onChangeText={(email) => this.setState({ email })}
           value={this.state.email}
           style={stylesSignUp.textInput}
         />
+        <Text style={stylesSignUp.titleText}>Password:</Text>
         <TextInput
           placeholder="Enter your password..."
           onChangeText={(password) => this.setState({ password })}
@@ -158,7 +161,14 @@ const stylesSignUp = StyleSheet.create({
     fontSize: 20, 
     fontWeight: 'bold', 
     textAlign: 'center', 
-    color: 'steelblue' },
+    color: 'steelblue' 
+  },
+  titleText: { 
+    fontSize: 20, 
+    fontWeight: 'bold', 
+    textAlign: 'left', 
+    color: 'steelblue' 
+  },
   textInput: { 
     padding: 5, 
     borderWidth: 1, 

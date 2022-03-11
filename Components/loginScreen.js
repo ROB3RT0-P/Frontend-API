@@ -51,12 +51,14 @@ class Log extends Component {
     const navigation = this.props.navigation;
     return (
       <ScrollView>
+        <Text style={stylesLogin.titleText}>Email:</Text>
         <TextInput
           placeholder="Enter your email..."
           onChangeText={(email) => this.setState({ email })}
           value={this.state.email}
           style={stylesLogin.textInput}
         />
+        <Text style={stylesLogin.titleText}>Password:</Text>
         <TextInput
           placeholder="Enter your password..."
           onChangeText={(password) => this.setState({ password })}
@@ -119,7 +121,14 @@ const stylesLogin = StyleSheet.create({
     fontSize: 20, 
     fontWeight: 'bold', 
     textAlign: 'center', 
-    color: 'steelblue' },
+    color: 'steelblue' 
+  },
+  titleText: { 
+    fontSize: 20, 
+    fontWeight: 'bold', 
+    textAlign: 'left', 
+    color: 'steelblue' 
+  },
   textInput: { 
     padding: 5, 
     borderWidth: 1, 

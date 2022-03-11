@@ -103,20 +103,15 @@ class UserScreen extends Component {
   }
 
   updateUser = async () => {
-    let to_send = {first_name:'', last_name:''};
+    //let to_send = {first_name:'', last_name:''};
 
-    this.state.orig_first_name = this.state.listData.first_name;
-    this.state.orig_last_name = this.state.listData.last_name;
 
-    console.log(this.state.orig_first_name, this.state.orig_last_name)
-    if (this.state.first_name != this.state.orig_first_name) {
-      to_send['first_name'] = parseInt(this.state.first_name);
-    }
-    if (this.state.last_name != this.state.orig_last_name) {
-      to_send['last_name'] = parseInt(this.state.last_name);
-    }
-    console.log(JSON.stringify(to_send));
-
+  
+    let to_send = {
+      first_name: this.state.first_name,
+      first_name: this.state.last_name,
+    };
+      console.log(JSON.stringify(to_send));
     const id = await AsyncStorage.getItem('@user_id');
     const value = await AsyncStorage.getItem('@session_token');
     return fetch("http://localhost:3333/api/1.0.0/user/" + id, {

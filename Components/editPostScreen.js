@@ -13,7 +13,8 @@ class EditPost extends Component {
     this.state = {
       isLoading: true,
       listData: [],
-      postText: '',
+      text: '',
+      orig_text:'',
       countDown: ''
     };
   }
@@ -42,7 +43,7 @@ class EditPost extends Component {
     this.state.postText = post_text;
     const id = await AsyncStorage.getItem('@user_id');
     const value = await AsyncStorage.getItem('@session_token');
-    return fetch("http://localhost:3333/api/1.0.0/search/", {
+    return fetch("http://localhost:3333/api/1.0.0/user/" + id + "/post/" + post_id, {
       'headers': {
         'X-Authorization': value
       }
@@ -83,32 +84,25 @@ class EditPost extends Component {
   };
 
   updatePost = async () => {
-    let to_send = { first_name: '', last_name: '' };
+    let to_send = {
+      text: this.state.text,
+    };
 
-    this.state.orig_text = this.state.listData.text;
-
-    console.log(this.state.orig_first_name, this.state.orig_last_name)
-    if (this.state.first_name != this.state.orig_first_name) {
-      to_send['first_name'] = parseInt(this.state.first_name);
-    }
-    if (this.state.last_name != this.state.orig_last_name) {
-      to_send['last_name'] = parseInt(this.state.last_name);
-    }
     console.log(JSON.stringify(to_send));
-    const id2 = await AsyncStorage.getItem('post_id');
+    const id2 = await AsyncStorage.getItem('@post_id');
     const id = await AsyncStorage.getItem('@user_id');
     const value = await AsyncStorage.getItem('@session_token');
-    return fetch("http://localhost:3333/api/1.0.0//user/" + id + "/post/" + id2, {
+    return fetch("http://localhost:3333/api/1.0.0/user/" + id + "/post/" + id2, {
       method: 'patch',
       headers: {
         'X-Authorization': value,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ to_send })
+      body: JSON.stringify({to_send})
     })
       .then((response) => {
         if (response.status === 200) {
-          console.log("Information Updated", responseJson, to_send)
+          console.log("Post Updated", responseJson, to_send)
           return response.json();
         } else if (response.status === 400) {
           alert("Bad Request");
@@ -116,10 +110,10 @@ class EditPost extends Component {
           alert("You're logged out, please log in");
           this.props.navigation.navigate("Login");
         } else if (response.status === 403) {
-          alert("Forbidden");
+          alert("Forbidden - You can only update your own posts");
           this.props.navigation.navigate("Login");
         } else if (response.status === 404) {
-          alert("User not found");
+          alert("Post not found");
         } else if (response.status === 500) {
           alert("Server Error");
         } else {
@@ -157,7 +151,7 @@ class EditPost extends Component {
             <Text style={stylesNewPost.text}>Update Post</Text>
 
             <TextInput
-              placeholder={this.state.post_text}
+              placeholder={this.state.postText}
               onChangeText={(text) => this.setState({ text })}
               value={this.state.text}
               multiline={true}

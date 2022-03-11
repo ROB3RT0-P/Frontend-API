@@ -29,6 +29,7 @@ class FriendList extends Component {
   }
 
   getData = async () => {
+    
     const id = await AsyncStorage.getItem('@user_id');
     const value = await AsyncStorage.getItem('@session_token');
     return fetch("http://localhost:3333/api/1.0.0/user/" + id + "/friends", {
